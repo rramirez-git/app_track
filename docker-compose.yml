@@ -1,0 +1,28 @@
+# docker-compose up
+# docker-compose down
+# docker-compose down -v -> it will delete data
+# docker inspect <container id> | grep "IPAddress"
+# IP: 10.5.0.5
+
+version: '3.3'
+
+services:
+  mysql:
+    container_name: mysql_container
+    restart: always
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password123'
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      network:
+        ipv4_address: 10.5.0.5
+
+networks:
+  network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          # gateway: 10.5.0.1

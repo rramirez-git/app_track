@@ -127,3 +127,14 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# IDEs
+.idea
+.idea/
+
+# database & settings
+db/
+app/local_settings.py
+files/static/
+files/media/
+static/
