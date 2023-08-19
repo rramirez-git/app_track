@@ -9,8 +9,6 @@ frmFavorito
     - url
     - etiqueta
 """
-from django import forms
-
 from .models import Favorito
 from zend_django.hiperforms import HorizontalModelForm
 
