@@ -1,0 +1,7 @@
+{% for fav in favs %}
+    {% if fav.isInternal %}
+        <a data-lnk="{{ fav.pk }}" href="{{fav.url}}" class="fav-lnk {{ extra_class }}">{{fav.etiqueta}}</a>
+    {% else %}
+        <a data-lnk="{{ fav.pk }}" href="{{fav.url}}" class="fav-lnk {{ extra_class }}" target="_blank">{{fav.etiqueta}}</a>
+    {% endif %}
+{% endfor %}

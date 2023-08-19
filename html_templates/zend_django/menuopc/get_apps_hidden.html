@@ -1,0 +1,11 @@
+{% if apps %}
+
+<div class="hidden-opc d-none">
+    {% for app in apps %}
+        <a class="dropdown-item" href="{%if app.get_vista_url %}{{ app.get_vista_url }}{% else %}#{% endif %}">
+            {{ app }}
+        </a>
+    {% endfor %}
+</div>
+
+{% endif%}

@@ -1,0 +1,15 @@
+{
+    "configuracion": {
+      "mnuopc_position": 1000,
+      "display_as_app": true
+    },
+    "administrar": {
+      "mnuopc_position": 1001,
+      "display_as_app": true
+    },
+    "mis_favoritos": {
+      "mnuopc_position": 1002,
+      "display_as_app": false
+    }
+  }
+  

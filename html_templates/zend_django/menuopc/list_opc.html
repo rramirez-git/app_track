@@ -1,0 +1,15 @@
+{% load op_helpers %}
+{% load mainopc_helpers %}
+<tr data-dgr-object-id="{{ reg.pk }}">
+    <td class="text-center d-none">
+        <!--<input type="checkbox" class="action-on-reg" data-recordid="{{ reg.pk }}" data-toggle="toggle" data-size="xs" data-onstyle="secondary" data-style="ios" data-on=" " data-off=" " />-->
+        <input type="checkbox" class="form-check-inline massive-operations" data-dgr-object-id="{{ reg.pk }}" />
+    </td>
+    <td data-dgr-raw-sort-value="{{ reg|safe|lower }}" data-dgr-raw-filter-value="{{ reg|safe|lower }}" style="padding-left: {% widthratio nivel 1 25 %}px;">
+        {{ reg.posicion }}) {{ reg|safe }} {{permisos}}
+    </td>
+    <td></td>
+</tr>
+{% for reg in reg.hijos.all %}
+    {% print_menu_opc_adm nivel=nivel opcion=reg perms=perms %}
+{% endfor %}

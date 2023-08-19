@@ -1,0 +1,79 @@
+{% extends "zend_django/html/html_struct.html" %}
+{% load crispy_forms_tags %}
+{% load op_helpers %}
+
+{% block content %}
+
+<!--
+forms = {
+    'top': [{'title':'XXXX', 'form': form_object}, ...],
+    'left': [...],
+    'right': [...],
+    'bottom': [...],
+}
+
+-->
+
+<form method="post" autocomplete="off" enctype="multipart/form-data" id="main-form" action="">
+    {% csrf_token %}
+
+    {% if forms.top %}
+    <div class="row">
+        <div class="col-sm-8">
+            <!-- forms.Top -->
+            {% for form_obj in forms.top %}
+                {% if form_obj.title %}<h5>{{ form_obj.title }}</h5>{% endif %}
+                {% crispy form_obj.form %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+
+        {% if forms.left %}
+        <div class="col-sm-4">
+            <!-- forms.left -->
+            {% for form_obj in forms.left %}
+                {% if form_obj.title %}<h5>{{ form_obj.title }}</h5>{% endif %}
+                {% crispy form_obj.form %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if forms.right %}
+        <div class="col-sm-4">
+            <!-- forms.right -->
+            {% for form_obj in forms.right %}
+                {% if form_obj.title %}<h5>{{ form_obj.title }}</h5>{% endif %}
+                {% crispy form_obj.form %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% if forms.bottom %}
+    <div class="row">
+        <div class="col-sm-8">
+            <!-- forms.bottom -->
+            {% for form_obj in forms.bottom %}
+                {% if form_obj.title %}<h5>{{ form_obj.title }}</h5>{% endif %}
+                {% crispy form_obj.form %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not withoutBtnSave %}
+    <div class="row">
+        <div class="col-sm-8">
+            <button type="submit" class="btn btn-outline-secondary" id="btn-save" title="{% action_label 'save' %}">
+                {% action_icon 'save' %}
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</form>
+
+{% endblock %}

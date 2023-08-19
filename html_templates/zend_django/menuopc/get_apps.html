@@ -1,0 +1,15 @@
+{% if apps %}
+
+<ul id="apps-nav" class="nav flex-column">
+    {% for app in apps %}
+        {% if app.posicion < 9000 %}
+            <li class="nav-item">
+                <a class="nav-link" href="{%if app.get_vista_url %}{{ app.get_vista_url }}{% else %}#{% endif %}">
+                    {{ app }}
+                </a>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
+{% endif%}

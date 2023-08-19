@@ -1,0 +1,134 @@
+{% load op_helpers %}
+{% verbatim %}
+
+<script id="tpl-filter-empty-cell" type="text/x-handlebars-template">
+    <th class="d-none"></th>
+</script>
+
+<script id="tpl-filter-cell" type="text/x-handlebars-template">
+    <th>
+        <input data-column="{{ column_number }}" type="text" class="form-control" id="filter_{{ column_number }}" value=""/>
+    </th>
+</script>
+
+<script id="tpl-filter-last-cell" type="text/x-handlebars-template">
+    <th>
+        <div class="btn-group" role="group" aria-label="Filtros">
+            <button type="button" onclick="dataGridResultsGlobals.apply_filter()" class="btn btn-outline-secondary d-none" role="button" title="Filtrar">
+                <i class="fas fa-redo-alt"></i>
+            </button>
+            <button type="button" onclick="dataGridResultsGlobals.clear_filter()" class="btn btn-outline-secondary" role="button" title="Limpiar Filtros">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    </th>
+</script>
+
+<script id="tpl-filter-row" type="text/x-handlebars-template">
+    <tr id="filter-row" class="collapse">
+        {{#each cells}}
+            {{{this}}}
+        {{/each}}
+    </tr>
+</script>
+
+<script type="text/x-handlebars-template" id="tpl-toggler-cols-modal-panel">
+    <div id="toggler-cols-modal-panel" class="modal fade" tabindex="-1" role="dialog" style="font-size: smaller;">
+        <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mostrar/Ocultar Columnas</h5>
+                    <button data-action="close-modal" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group" id="lst-tbl-cols">
+                        {{#each columns}}
+                            <li class="list-group-item tbl-col-item">
+                                    <input data-colnumber="{{this.idx}}" onchange="dataGridResultsGlobals.toggle_col($(this))" checked="checked" type="checkbox" data-toggle="toggle" data-size="xs" data-onstyle="secondary" data-style="ios" data-on=" " data-off=" "/>
+                                    {{this.label}}
+                            </li>
+                        {{/each }}
+                        <li class="list-group-item">
+                            <label onclick="dataGridResultsGlobals.toggle_col()" style="cursor: pointer">
+                                <strong>Mostrar todas las columnas</strong>
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="tpl-toggler-cols-submenu">
+    <li class="dropdown-submenu dropleft" title="Mostrar/Ocultar Columnas">
+        <a href="#" class="dropdown-item dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            {% endverbatim %}
+            {% crud_icon 'read' %}
+            {% verbatim %}
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            {{#each columns}}
+                <li class="dropdown-item" onclick="event.stopPropagation(); dataGridResultsGlobals.toggle_col($(this).find('input'));">
+                    <input data-colnumber="{{this.idx}}" checked="checked" type="checkbox" data-toggle="toggle" data-size="xs" data-onstyle="secondary" data-style="ios" data-on=" " data-off=" "/>
+                    {{{this.label}}}
+                </li>
+            {{/each }}
+            <li class="dropdown-item">
+                <label onclick="dataGridResultsGlobals.toggle_col()" style="cursor: pointer">
+                    <strong>Mostrar todas las columnas</strong>
+                </label>
+            </li>
+        </ul>
+    </li>
+</script>
+
+<script type="text/x-handlebars-template" id="tpl-to-excel">
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+            <!--[if gte mso 9]>
+                <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>{{hoja}}</x:Name>
+                                <x:WorksheetOptions>
+                                    <x:DisplayGridlines/>
+                                </x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorksheets>
+                    </x:ExcelWorkbook>
+                </xml>
+            <![endif]-->
+            <meta http-equiv="content-type" content="text/plain; charset=UTF-8"/>
+        </head>
+        <body>
+            <table>
+                {{#each rows}}
+                    {{{ this }}}
+                {{/each}}
+            </table>
+        </body>
+    </html>
+</script>
+
+<script type="text/x-handlebars-template" id="tpl-to-excel-header">
+    <tr>
+        {{#each colums}}
+            <td><strong>{{ label }}</strong></td>
+        {{/each}}
+    </tr>
+</script>
+
+<script type="text/x-handlebars-template" id="tpl-to-excel-row">
+    <tr>
+        {{#each cells}}
+            <td>{{ this }}</td>
+        {{/each}}
+    </tr>
+</script>
+
+{% endverbatim %}

@@ -10,9 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from pathlib import Path
-import os
 import mimetypes
+import os
+
+from pathlib import Path
 
 from .local_settings import *
 
@@ -41,7 +42,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    'crispy_forms',
+    'django.contrib.humanize',
+
     "zend_django",
+    'app_favoritos',
 ]
 
 MIDDLEWARE = [
@@ -67,7 +72,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-'django.template.context_processors.media',
+                "django.template.context_processors.media",
             ],
         },
     },
@@ -130,3 +135,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'files/media')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

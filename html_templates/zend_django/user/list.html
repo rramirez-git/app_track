@@ -1,0 +1,150 @@
+{% extends "zend_django/html/html_struct.html" %}
+{% load i18n %}
+{% load op_helpers %}
+
+{% block content %}
+
+<script type="text/javascript">
+    let url_update = "{% url 'user_update' pk='__recordid__' %}";
+    let url_delete = "{% url 'user_delete' pk='__recordid__' %}";
+    let url_read = "{% url 'user_read' pk='__recordid__' %}";
+</script>
+
+<div class="btn-group d-none" role="group" aria-label="Acciones">
+    {% if perms.auth.add_user %}
+    <a data-action="create" href="{% url 'user_create' %}" class="btn btn-outline-secondary" role="button" title="{% crud_label 'create' %}">
+        {% crud_icon 'create' %}
+    </a>
+    {% endif %}
+    {% if perms.auth.change_user %}
+    <button type="button" onclick="dataGridResultsGlobals.update_many()" data-action="update" class="btn btn-outline-secondary" role="button" title="{% crud_label 'update' %}">
+            {% crud_icon 'update' %}
+    </button>
+    {% endif %}
+    {% if perms.auth.delete_user %}
+    <button type="button" data-action="delete" onclick="dataGridResultsGlobals.delete_many()" class="btn btn-outline-secondary" role="button" title="{% crud_label 'delete' %}">
+        {% crud_icon 'delete' %}
+    </button>
+    {% endif %}
+    <button type="button" data-action="toggle-cols" onclick="dataGridResultsGlobals.show_toggler_cols()" class="btn btn-outline-secondary" role="button" title="Mostrar/Ocultar Columnas">
+        {% crud_icon 'read' %}
+    </button>
+</div>
+<div class="btn-group d-none" role="group" aria-label="Filtrado-Filas">
+    <button type="button" onclick="dataGridResultsGlobals.filtrar_filas()" class="btn btn-outline-secondary" role="button" title="Filtrar Filas">
+        <i class="fas fa-filter"></i>
+    </button>
+    <button type="button" onclick="dataGridResultsGlobals.restaurar_filtrado_filas()" class="btn btn-outline-secondary" role="button" title="Borrar Filtro en Filas">
+        <i class="fas fa-trash-restore"></i>
+    </button>
+</div>
+
+<table id="data-grid-report" class="table_zd table-sm table-responsive">
+    <thead>
+        <tr>
+            <th class="d-none"></th>
+            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="yes"
+                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
+                Usuario
+            </th>
+            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="yes"
+                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
+                Nombre
+            </th>
+            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="no"
+                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
+                Email
+            </th>
+            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="no"
+                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
+                Teléfono
+            </th>
+            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="no"
+                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
+                Celular
+            </th>
+            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="no"
+                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
+                Whats App
+            </th>
+            <th class="text-center">
+                <div class="d-inline-block" title="Filtros">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" role="button" data-toggle="collapse" data-target="#filter-row" aria-expanded="false" aria-controls="filter-row">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th></th>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Celular</th>
+            <th>Whats App</th>
+            <th></th>
+        </tr>
+    </tfoot>
+    <tbody id="data-tbl">
+        {% for reg in data %}
+            <tr data-dgr-object-id="{{ reg.pk }}">
+                <td class="text-center d-none">
+                    <!--<input type="checkbox" class="action-on-reg" data-recordid="{{ reg.pk }}" data-toggle="toggle" data-size="xs" data-onstyle="secondary" data-style="ios" data-on=" " data-off=" " />-->
+                    <input type="checkbox" class="form-check-inline massive-operations" data-dgr-object-id="{{ reg.pk }}" />
+                </td>
+                <td data-dgr-raw-sort-value="{{ reg.username|lower }}" data-dgr-raw-filter-value="{{ reg.username|lower }}">
+                    {{ reg.username }}
+                </td>
+                <td data-dgr-raw-sort-value="{{ reg.get_full_name|lower }}" data-dgr-raw-filter-value="{{ reg.get_full_name|lower }}">
+                    {{ reg.get_full_name }}
+                </td>
+                <td data-dgr-raw-sort-value="{{ reg.email|lower }}" data-dgr-raw-filter-value="{{ reg.email|lower }}">
+                    {% if reg.email %}
+                    <a data-action="send_mail" href="mailto:{{ reg.email }}" target="_blank">
+                        {% action_icon 'send_mail' %}
+                        {{ reg.email }}
+                    </a>
+                    {% endif %}
+                </td>
+                <td data-dgr-raw-sort-value="{{ reg.profile.telefono|lower }}" data-dgr-raw-filter-value="{{ reg.profile.telefono|lower }}">
+                    {% if reg.profile.telefono %}
+                    <a data-action="call" href="tel:{{ reg.profile.telefono }}" target="_blank">
+                        {% action_icon 'call' %}
+                        {{ reg.profile.telefono }}
+                    </a>
+                    {% endif %}
+                </td>
+                <td data-dgr-raw-sort-value="{{ reg.profile.celular|lower }}" data-dgr-raw-filter-value="{{ reg.profile.celular|lower }}">
+                    {% if reg.profile.celular %}
+                    <a data-action="call" href="tel:{{ reg.profile.celular }}" target="_blank">
+                        {% action_icon 'call' %}
+                        {{ reg.profile.celular }}
+                    </a>
+                    {% endif %}
+                </td>
+                <td data-dgr-raw-sort-value="{{ reg.profile.whatsapp|lower }}" data-dgr-raw-filter-value="{{ reg.profile.whatsapp|lower }}">
+                    {% if reg.profile.whatsapp %}
+                    <a data-action="send_whatsapp" href="https://api.whatsapp.com/send?phone=52{{ reg.profile.whatsapp }}" target="_blank">
+                        {% action_icon 'send_whatsapp' %}
+                        {{ reg.profile.whatsapp }}
+                    </a>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    {% if perms.auth.reset_password %}
+                    <a data-action="reset_password" href="{% url 'user_reset_password' username=reg.username %}" class="btn btn-outline-secondary btn-sm" role="button" title="{% action_label 'reset_password' %}">
+                        {% action_icon 'reset_password' %}
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include 'zend_django/datagridresults/handlebars_tpls.html' %}
+
+{% endblock %}

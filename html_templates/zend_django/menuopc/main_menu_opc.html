@@ -1,0 +1,37 @@
+{% load mainopc_helpers %}
+
+{% for opc in opciones %}
+    {% if opc.hijos.all %}
+        {% if nivel == 1 %}
+            <a style="padding: 0.05rem 1rem 0.05rem {{ nivel }}rem;" class="nav-link text-light" role="button" data-toggle="collapse" href="#submenu-{{ opc.pk }}" aria-expanded="false" aria-controls="submenu-{{ opc.pk }}">
+                <button type="button" class="btn btn-outline-light float-right btn-sm">
+                    <i class="fas fa-caret-down"></i>
+                </button>
+                {{ opc|safe }}
+            </a>
+            <div id="submenu-{{ opc.pk }}" class="collapse">
+                {% main_menu opc.hijos.all nivel user_id app %}
+            </div>
+        {% else %}
+            <a style="padding: 0.05rem 1rem 0.05rem {{ nivel }}rem;" class="nav-link text-light" role="button" data-toggle="collapse" href="#submenu-{{ opc.pk }}" aria-expanded="false" aria-controls="submenu-{{ opc.pk }}">
+                <button type="button" class="btn btn-outline-light float-right btn-sm">
+                    <i class="fas fa-caret-down"></i>
+                </button>
+                {{ opc|safe }}
+            </a>
+            <div id="submenu-{{ opc.pk }}" class="collapse">
+                {% main_menu opc.hijos.all nivel user_id app %}
+            </div>
+        {% endif %}
+    {% else %}
+        {% if nivel == 1 %}
+            <a style="padding: 0.05rem 1rem 0.05rem {{ nivel }}rem;" class="nav-link text-light" href="{%if opc.get_vista_url %}{{ opc.get_vista_url }}{% else %}#{% endif %}">
+                {{ opc|safe }}
+            </a>
+        {% else %}
+            <a style="padding: 0.05rem 1rem 0.05rem {{ nivel }}rem;" class="nav-link text-light" href="{%if opc.get_vista_url %}{{ opc.get_vista_url }}{% else %}#{% endif %}">
+                {{ opc|safe }}
+            </a>
+        {% endif %}
+    {% endif %}
+{% endfor %}

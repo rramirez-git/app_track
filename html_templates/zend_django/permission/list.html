@@ -1,0 +1,105 @@
+{% extends "zend_django/html/html_struct.html" %}
+{% load i18n %}
+{% load op_helpers %}
+
+{% block content %}
+
+<script type="text/javascript">
+    let url_update = "{% url 'permission_update' pk='__recordid__' %}";
+    let url_delete = "{% url 'permission_delete' pk='__recordid__' %}";
+    let url_read = "{% url 'permission_read' pk='__recordid__' %}";
+</script>
+
+<div class="btn-group d-none" role="group" aria-label="Acciones">
+    {% if perms.auth.add_permission %}
+    <a data-action="create" href="{% url 'permission_create' %}" class="btn btn-outline-secondary" role="button" title="{% crud_label 'create' %}">
+        {% crud_icon 'create' %}
+    </a>
+    {% endif %}
+    {% if perms.auth.change_permission %}
+    <button type="button" onclick="dataGridResultsGlobals.update_many()" data-action="update" class="btn btn-outline-secondary" role="button" title="{% crud_label 'update' %}">
+            {% crud_icon 'update' %}
+    </button>
+    {% endif %}
+    {% if perms.auth.delete_permission %}
+    <button type="button" data-action="delete" onclick="dataGridResultsGlobals.delete_many()" class="btn btn-outline-secondary" role="button" title="{% crud_label 'delete' %}">
+        {% crud_icon 'delete' %}
+    </button>
+    {% endif %}
+    <button type="button" data-action="toggle-cols" onclick="dataGridResultsGlobals.show_toggler_cols()" class="btn btn-outline-secondary" role="button" title="Mostrar/Ocultar Columnas">
+        {% crud_icon 'read' %}
+    </button>
+</div>
+<div class="btn-group d-none" role="group" aria-label="Filtrado-Filas">
+    <button type="button" onclick="dataGridResultsGlobals.filtrar_filas()" class="btn btn-outline-secondary" role="button" title="Filtrar Filas">
+        <i class="fas fa-filter"></i>
+    </button>
+    <button type="button" onclick="dataGridResultsGlobals.restaurar_filtrado_filas()" class="btn btn-outline-secondary" role="button" title="Borrar Filtro en Filas">
+        <i class="fas fa-trash-restore"></i>
+    </button>
+</div>
+
+<table id="data-grid-report" class="table_zd table-sm table-responsive">
+    <thead>
+        <tr>
+            <th class="d-none"></th>
+            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="no" data-dgr-col-link-detail="yes"
+                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
+                Permiso
+            </th>
+            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="no"
+                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
+                Tipo
+            </th>
+            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="no"
+                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
+                Código
+            </th>
+            <th class="text-center">
+                <div class="d-inline-block" title="Filtros">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" role="button" data-toggle="collapse" data-target="#filter-row" aria-expanded="false" aria-controls="filter-row">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>Permiso</th>
+            <th>Tipo</th>
+            <th>Código</th>
+            <th colspan="3" class="text-center">
+                {% if perms.auth.add_permission %}
+                <a data-action="create" href="{% url 'permission_create' %}" class="btn btn-outline-secondary" role="button" title="{% crud_label 'create' %}">
+                    {% crud_icon 'create' %} {% crud_label 'create' %}
+                </a>
+                {% endif %}
+            </th>
+        </tr>
+    </tfoot>
+    <tbody id="data-tbl">
+        {% for reg in data %}
+            <tr data-dgr-object-id="{{ reg.pk }}">
+                <td class="text-center d-none">
+                    <!--<input type="checkbox" class="action-on-reg" data-recordid="{{ reg.pk }}" data-toggle="toggle" data-size="xs" data-onstyle="secondary" data-style="ios" data-on=" " data-off=" " />-->
+                    <input type="checkbox" class="form-check-inline massive-operations" data-dgr-object-id="{{ reg.pk }}" />
+                </td>
+                <td data-dgr-raw-sort-value="{{ reg.name|lower }}" data-dgr-raw-filter-value="{{ reg.name|lower }}">
+                    {{ reg.name }}
+                </td>
+                <td data-dgr-raw-sort-value="{% language 'en' %}{{ reg.content_type|lower }}{% endlanguage %}" data-dgr-raw-filter-value="{% language 'en' %}{{ reg.content_type|lower }}{% endlanguage %}">
+                    {% language 'en' %}{{ reg.content_type }}{% endlanguage %}
+                </td>
+                <td data-dgr-raw-sort-value="{{ reg.codename|lower }}" data-dgr-raw-filter-value="{{ reg.codename|lower }}">
+                    {{ reg.codename }}
+                </td>
+                <td></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include 'zend_django/datagridresults/handlebars_tpls.html' %}
+
+{% endblock %}
