@@ -24,8 +24,8 @@ from zend_django.views import GenericRead
 from zend_django.views import GenericUpdate
 from zend_django.views import View
 
-from app_favoritos.manage.models import Favorito as main_model
 from .forms import frmFavorito as base_form
+from app_favoritos.manage.models import Favorito as main_model
 from zend_django.parametrousuario.models import ParametroUsuario
 
 

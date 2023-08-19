@@ -40,8 +40,12 @@ def main():
                         subprocess.call(
                             ['pycodestyle', arch], stdout=sys.stdout)
     print("\n")
-    print("Import checking (importchecker)")
-    subprocess.call(['importchecker', "."], stdout=sys.stdout)
+    for root, dirs, files in os.walk(os.getcwd()):
+        if skip_dirs(root):
+            continue
+        if root != os.getcwd():
+            print(f"Import checking (importchecker): {root}")
+            subprocess.call(['importchecker', root], stdout=sys.stdout)
 
 if __name__ == "__main__":
     main()

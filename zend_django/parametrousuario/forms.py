@@ -10,7 +10,6 @@ frmParametroUsuario
     - valor_default
     - tipo
 """
-from django import forms
 
 from .models import ParametroUsuario
 from zend_django.hiperforms import HorizontalModelForm

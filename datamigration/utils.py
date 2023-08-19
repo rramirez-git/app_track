@@ -2,8 +2,10 @@ from django.contrib.auth.models import Permission
 
 from zend_django.templatetags.op_labels import CRUD_labels
 
+
 def migration():
     pass
+
 
 def update_permisos():
     for p in Permission.objects.filter(codename__icontains='add_'):

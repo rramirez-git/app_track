@@ -2,9 +2,11 @@
 Funciones de utilería para la aplicación
 """
 
+
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from functools import reduce
+
 
 from zend_django.templatetags.op_helpers import crud_icon
 from zend_django.templatetags.op_helpers import crud_label

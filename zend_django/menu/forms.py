@@ -40,5 +40,5 @@ class frmMenuOpc(HorizontalModelForm):
             'permisos_requeridos',
         ]
         widgets = {
-            'permisos_requeridos': forms.SelectMultiple(attrs={"size":25})
+            'permisos_requeridos': forms.SelectMultiple(attrs={"size": 25})
         }

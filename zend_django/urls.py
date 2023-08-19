@@ -14,10 +14,10 @@ from django.contrib.auth.decorators import permission_required
 from django.urls import include
 from django.urls import path
 
-from .item_vw import ItemConRelaciones
-from .item_vw import ItemNoEncontrado
 from .apps_vw import AdministracionView
 from .apps_vw import ConfiguracionView
+from .item_vw import ItemConRelaciones
+from .item_vw import ItemNoEncontrado
 from .views import Migrate
 
 urlpatterns = [

@@ -11,7 +11,6 @@ Constantes
 - PARAM_TYPES_Tuples
 - parametro_upload_to
 """
-from django.contrib.auth.models import User
 from django.db import models
 
 testing = True
@@ -110,4 +109,3 @@ class ParametroSistema(models.Model):
                 seccion=seccion, nombre=nombre).valor
         except ParametroSistema.DoesNotExist:
             return f"Parámetro de Sistema no encontrado: {seccion} / {nombre}"
-

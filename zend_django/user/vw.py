@@ -28,16 +28,16 @@ from .forms import frmUserTopMe
 from .forms import frmUserTopReadUpdate
 from .forms import frmUserUpdate
 from .models import UserProfile
-from zend_django.views import GenericCreate
-from zend_django.views import GenericDelete
-from zend_django.views import GenericList
-from zend_django.views import GenericRead
-from zend_django.views import GenericUpdate
 from zend_django.templatetags.op_helpers import action_label
 from zend_django.templatetags.op_helpers import crud_icon
 from zend_django.templatetags.op_helpers import crud_label
 from zend_django.templatetags.op_helpers import crud_smart_button
 from zend_django.templatetags.utils import GenerateReadCRUDToolbar
+from zend_django.views import GenericCreate
+from zend_django.views import GenericDelete
+from zend_django.views import GenericList
+from zend_django.views import GenericRead
+from zend_django.views import GenericUpdate
 
 
 def template_base_path(file):

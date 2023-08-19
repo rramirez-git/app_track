@@ -16,9 +16,9 @@ from django.views import View
 from os import mkdir
 from os import path
 
+from .forms import frmParametroSistema as base_form
 from .models import ParametroSistema as main_model
 from .models import parametro_upload_to
-from .forms import frmParametroSistema as base_form
 from zend_django.views import GenericCreate
 from zend_django.views import GenericDelete
 from zend_django.views import GenericList
@@ -119,7 +119,7 @@ class Set(View):
         if "singles" == request.POST.get('action'):
             parametros = self.main_data_model.objects.filter(es_multiple=False)
             for parametro in parametros:
-                if("INTEGER" == parametro.tipo
+                if ("INTEGER" == parametro.tipo
                         or "STRING" == parametro.tipo
                         or "DECIMAL" == parametro.tipo
                         or "TEXT" == parametro.tipo):

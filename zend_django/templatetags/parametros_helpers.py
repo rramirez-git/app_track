@@ -8,8 +8,8 @@ Cargar con {% load parametros_helpers %}
 from django import template
 from django.utils.safestring import mark_safe
 from zend_django.parametrosistema.models import ParametroSistema
-from zend_django.parametrousuario.models import ParametroUsuarioValor
 from zend_django.parametrosistema.models import parametro_upload_to
+from zend_django.parametrousuario.models import ParametroUsuarioValor
 
 register = template.Library()
 

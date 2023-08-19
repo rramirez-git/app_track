@@ -14,9 +14,9 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views import View
 
+from .forms import frmParametroUsuario as base_form
 from .models import ParametroUsuario as main_model
 from .models import ParametroUsuarioValor
-from .forms import frmParametroUsuario as base_form
 from zend_django.views import GenericCreate
 from zend_django.views import GenericDelete
 from zend_django.views import GenericList

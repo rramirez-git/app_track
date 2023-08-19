@@ -71,7 +71,8 @@ frmUserResetPassword
     - password
 """
 from django import forms
-from zend_django.hiperforms import HorizontalModelForm, HorizontalForm
+from zend_django.hiperforms import HorizontalForm
+from zend_django.hiperforms import HorizontalModelForm
 
 from django.contrib.auth.models import User
 
@@ -129,8 +130,8 @@ class frmUser(HorizontalModelForm):
             'user_permissions': "Permisos",
         }
         widgets = {
-            'groups': forms.SelectMultiple(attrs={"size":5}),
-            'user_permissions': forms.SelectMultiple(attrs={"size":25}),
+            'groups': forms.SelectMultiple(attrs={"size": 5}),
+            'user_permissions': forms.SelectMultiple(attrs={"size": 25}),
             'password': forms.PasswordInput(),
         }
     field_order = [
@@ -198,8 +199,8 @@ class frmUserUpdate(HorizontalModelForm):
             'user_permissions': "Permisos",
         }
         widgets = {
-            'groups': forms.SelectMultiple(attrs={"size":5}),
-            'user_permissions': forms.SelectMultiple(attrs={"size":25}),
+            'groups': forms.SelectMultiple(attrs={"size": 5}),
+            'user_permissions': forms.SelectMultiple(attrs={"size": 25}),
         }
     field_order = [
         'first_name',
@@ -357,7 +358,7 @@ class frmUserRight(HorizontalModelForm):
             'groups': "Perfiles",
         }
         widgets = {
-            'groups': forms.SelectMultiple(attrs={"size":5}),
+            'groups': forms.SelectMultiple(attrs={"size": 5}),
         }
     field_order = [
         'is_staff',
@@ -385,7 +386,7 @@ class frmUserBottom(HorizontalModelForm):
             'user_permissions': "Permisos",
         }
         widgets = {
-            'user_permissions': forms.SelectMultiple(attrs={"size":25}),
+            'user_permissions': forms.SelectMultiple(attrs={"size": 25}),
         }
     field_order = [
         'user_permissions',

@@ -10,7 +10,6 @@ frmParametroSistema
     - nombre_para_mostrar
     - tipo
 """
-from django import forms
 from zend_django.hiperforms import HorizontalModelForm
 
 from .models import ParametroSistema

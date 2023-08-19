@@ -36,5 +36,5 @@ class frmGroup(HorizontalModelForm):
             'permissions': "Permisos",
         }
         widgets = {
-            'permissions': forms.SelectMultiple(attrs={"size":25})
+            'permissions': forms.SelectMultiple(attrs={"size": 25})
         }
