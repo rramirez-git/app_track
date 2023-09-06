@@ -147,7 +147,6 @@ def get_apps(context, user_id=0):
         config = json.load(json_file)
     opciones = []
     for key, configApp in config.items():
-        print(configApp)
         if configApp['display_as_app'] != hid:
             opciones.append(MenuOpc.objects.get(
                 padre=None, posicion=configApp['mnuopc_position']))
@@ -192,6 +191,7 @@ def get_apps(context, user_id=0):
                 padre=None, posicion=configApp['mnuopc_position'])
             if opc.exists():
                 opciones.append(opc[0])
+    print(opciones)
     return {
         'apps': [opc for opc in opciones if opc.user_has_option(user)],
     }

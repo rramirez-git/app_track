@@ -47,6 +47,8 @@ INSTALLED_APPS = [
 
     "zend_django",
     'app_favoritos',
+    "app_cliente",
+    "app_catalogo",
 ]
 
 MIDDLEWARE = [

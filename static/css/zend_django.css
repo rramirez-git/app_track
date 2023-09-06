@@ -244,3 +244,9 @@ form#main-form .custom-control-input:checked~.custom-control-label::before {
     background-color: rgba(123, 123, 123, 1);
     border-color: rgba(123, 123, 123, 1);
 }
+
+/***** General TAGS *****/
+
+body {
+    font-size: 85%;
+}
