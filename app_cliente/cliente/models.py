@@ -3,25 +3,10 @@ import pandas as pd
 from datetime import date
 from django.db import models
 
+from app_catalogo.models import EstadoCivil
 from app_catalogo.models import TaxonomiaExpediente
 from app_cliente.models import Direccion
 from zend_django.models import UserProfile
-
-
-ESTADO_CIVIL_SOLTERO = "Soltero"
-ESTADO_CIVIL_CASADO = "Casado"
-ESTADO_CIVIL_UNION_LIBRE = "UnionLibre"
-ESTADO_CIVIL_SEPARADO = "Separado"
-ESTADO_CIVIL_DIVORCIADO = "Divorciado"
-ESTADO_CIVIL_VIUDO = "Viudo"
-ESTADOS_CIVILES = (
-    (ESTADO_CIVIL_CASADO, "Casado"),
-    (ESTADO_CIVIL_DIVORCIADO, "Divorciado"),
-    (ESTADO_CIVIL_SEPARADO, "Separado"),
-    (ESTADO_CIVIL_SOLTERO, "Soltero"),
-    (ESTADO_CIVIL_UNION_LIBRE, "Unión Libre"),
-    (ESTADO_CIVIL_VIUDO, "Viudo"),
-)
 
 
 def UserProfilePkCliente():
@@ -52,10 +37,10 @@ class Cliente(models.Model):
     CURP = models.CharField(max_length=18, blank=True)
     RFC = models.CharField(max_length=13, blank=True)
     NSS = models.CharField(max_length=15, blank=True)
-    estado_civil = models.CharField(
-        max_length=15,
-        choices=ESTADOS_CIVILES,
-        default=ESTADO_CIVIL_CASADO)
+    estado_civil = models.ForeignKey(
+        to=EstadoCivil,
+        on_delete=models.RESTRICT,
+        related_name="+")
     conyuge = models.CharField(max_length=150, blank=True)
     clinica = models.CharField(
         max_length=150, blank=True, verbose_name="Clínica")

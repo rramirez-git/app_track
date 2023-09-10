@@ -12,6 +12,7 @@ Vistas
 - Get
 """
 from django.db.models import Q
+from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -85,10 +86,15 @@ class Create(GenericCreate):
         if form.is_valid():
             obj = form.save(commit=False)
             obj.usuario = request.user
-            obj.save()
-            return HttpResponseRedirect(reverse(
-                f'{self.model_name}_read',
-                kwargs={'pk': obj.pk}))
+            try:
+                obj.save()
+                return HttpResponseRedirect(reverse(
+                    f'{self.model_name}_read',
+                    kwargs={'pk': obj.pk}))
+            except IntegrityError:
+                form.add_error(
+                    'url',
+                    "Ya se a almacenado previamente esta URL en Mis Favortos")
         return self.base_render(request, {'top': [{'form': form}]})
 
 

@@ -193,10 +193,13 @@ class GenericCreate(View):
     def post(self, request):
         form = self.base_data_form(request.POST, files=request.FILES)
         if form.is_valid():
-            obj = form.save()
-            return HttpResponseRedirect(reverse(
-                f'{self.model_name}_read',
-                kwargs={'pk': obj.pk}))
+            try:
+                obj = form.save()
+                return HttpResponseRedirect(reverse(
+                    f'{self.model_name}_read',
+                    kwargs={'pk': obj.pk}))
+            except IntegrityError as e:
+                form.add(error=str(e))
         return self.base_render(request, {'top': [{'form': form}]})
 
 
@@ -257,10 +260,13 @@ class GenericUpdate(View):
         form = self.base_data_form(
             instance=obj, data=request.POST, files=request.FILES)
         if form.is_valid():
-            obj = form.save()
-            return HttpResponseRedirect(reverse(
-                f'{self.model_name}_read',
-                kwargs={'pk': obj.pk}))
+            try:
+                obj = form.save()
+                return HttpResponseRedirect(reverse(
+                    f'{self.model_name}_read',
+                    kwargs={'pk': obj.pk}))
+            except IntegrityError as e:
+                form.add_error(None, str(e))
         return self.base_render(request, form, obj)
 
 

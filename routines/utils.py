@@ -262,13 +262,12 @@ def send_mail(
     )
     email.attach_alternative(texto_html, "text/html")
     for img in imagenes:
-        print(img[0], img[1])
         with open(settings.MEDIA_ROOT + img[0], 'rb') as i:
             data = i.read()
         data_image = MIMEImage(data)
         data_image.add_header('Content-ID', '<' + img[1] + '>')
         email.attach(data_image)
-    print(email.send())
+    return email.send()
 
 
 def inter_periods_days(p1_inicio, p1_fin, p2_inicio, p2_fin):
@@ -345,16 +344,3 @@ def create_date_range(inicio, fin):
     for x in pd.date_range(inicio, fin):
         result.append(date(x.year, x.month, x.day))
     return result
-
-
-BootstrapColors = (
-    ('', 'Ninguno'),
-    ('primary', 'Primary'),
-    ('secondary', 'Secondary'),
-    ('success', 'Success'),
-    ('danger', 'Danger'),
-    ('warning', 'Warning'),
-    ('info', 'Info'),
-    ('light', 'Light'),
-    ('dark', 'Dark'),
-)

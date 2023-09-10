@@ -1,13 +1,14 @@
 from django.db import models
 
-from routines.utils import BootstrapColors
+from app_catalogo.models import BootstrapColor
 
 
 class TaxonomiaExpediente(models.Model):
     nombre = models.CharField(max_length=50)
-    color = models.CharField(
-        max_length=50, blank=True, choices=BootstrapColors,
-        default=BootstrapColors[0][0])
+    color = models.ForeignKey(
+        to=BootstrapColor,
+        on_delete=models.RESTRICT,
+        related_name="+")
     descripcion = models.TextField(
         blank=True, verbose_name="Descripción")
     mostrar_en_panel = models.BooleanField(default=False, blank=True)
@@ -21,7 +22,7 @@ class TaxonomiaExpediente(models.Model):
         ordering = ["nombre"]
 
     def __str__(self):
-        return "{}".format(self.nombre).strip()
+        return f"{self.nombre.strip()}"
 
     def __unicode__(self):
         return self.__str__()

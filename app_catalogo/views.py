@@ -40,7 +40,7 @@ class GenericCatalog():
         filterFn    callable function for filtering objects
                     filterFn(model_objects, search_value)
 
-                    def filterFn(model_objects, search_value):
+                    def filterFn(view_object, model_objects, search_value):
                         return list(model_objects.filter(
                             Q(seccion__icontains=search_value) |
                             Q(nombre__icontains=search_value) |
@@ -92,7 +92,7 @@ class GenericCatalog():
         filterFn    callable function for filtering objects
                     filterFn(model_objects, search_value)
 
-                    def filterFn(model_objects, search_value):
+                    def filterFn(view_object, model_objects, search_value):
                         return model_objects.filter(
                             Q(seccion__icontains=search_value) |
                             Q(nombre__icontains=search_value) |
@@ -104,12 +104,13 @@ class GenericCatalog():
             main_data_model = self.main_model
             model_name = self.model_name
             app = self.app
+            filterFn = self.filterFn
 
-            def get_data(self, search_value=''):
+            def get_data(selfObj, search_value=''):
                 if '' == search_value:
                     return list(
-                        self.main_data_model.objects.all())
+                        selfObj.main_data_model.objects.all())
                 else:
-                    return list(self.fn(
-                        self.main_data_model.objects, search_value))
+                    return list(selfObj.filterFn(
+                        selfObj.main_data_model.objects, search_value))
         return List

@@ -150,7 +150,7 @@ def migration():
             nombre_para_mostrar='Nombre del Sitio (para '
             'mostrar en el menú principal)',
             tipo=PARAM_TYPES['CADENA'],
-            valor=''
+            valor='SB'
         )
 
     if not ParametroSistema.objects.filter(
@@ -160,7 +160,7 @@ def migration():
             nombre='site_title',
             nombre_para_mostrar='Título del Sitio',
             tipo=PARAM_TYPES['CADENA'],
-            valor=''
+            valor='Sosa Del Bosque'
         )
 
     if not ParametroUsuario.objects.filter(

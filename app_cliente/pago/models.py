@@ -1,21 +1,8 @@
 from django.db import models
 
+from app_catalogo.models import CuentaPago
+from app_catalogo.models import EstatusPago
 from app_cliente.models import Cliente
-
-
-STATUS_PAGO = (
-    ('pendiente', 'Pendiente de Pago'),
-    ('pagado', 'Pagado'),
-    ('verificado', 'Pagado y Verificado')
-)
-
-
-CUENTAS_PAGO = (
-    ('efectivo', 'Efectivo'),
-    ('daniel azteca', 'Daniel Azteca'),
-    ('daniel banamex', 'Daniel Banamex'),
-    ('sosa del bosque', 'Sosa del Bosque'),
-)
 
 
 class Pago(models.Model):
@@ -24,10 +11,10 @@ class Pago(models.Model):
     concepto = models.CharField(max_length=250)
     cantidad = models.DecimalField(max_digits=7, decimal_places=2)
     fecha_de_pago = models.DateTimeField(null=True, blank=True)
-    estatus = models.CharField(
-        max_length=20, choices=STATUS_PAGO, default='pendiente')
-    cuenta = models.CharField(
-        max_length=50, blank=True, choices=CUENTAS_PAGO, default='efectivo')
+    estatus = models.ForeignKey(
+        EstatusPago, on_delete=models.RESTRICT, related_name="pagos")
+    cuenta = models.ForeignKey(
+        CuentaPago, on_delete=models.RESTRICT, related_name="pagos")
 
     class Meta:
         ordering = ["-estatus", "fecha_de_pago", 'pk']

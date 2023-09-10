@@ -297,8 +297,8 @@ class Me(GenericUpdate):
             'req_chart': False,
             'search_value': '',
             'forms': {
-                'top': [{'title': "Mi acceso", 'form': form['top']}],
-                'bottom': [{'title': "Mis datos", 'form': form['bottom']}],
+                'top': [{'title': "Mi acceso", 'form': form['top']}, ],
+                'bottom': [{'title': "Mis datos", 'form': form['bottom']}, ],
             },
             'app': self.app
         })

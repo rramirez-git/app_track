@@ -96,13 +96,13 @@
                 <td data-dgr-raw-sort-value="{{ reg.color|lower }}" data-dgr-raw-filter-value="{{ reg.color|lower }}">
                     <span class="text-{{ reg.color }} {% if reg.color == 'light' %}bg-dark{% endif %} rounded p-2" >
                         <i class="fas fa-vial"></i>
-                        {{ reg.color }}
+                        {{ reg.color.nombre }}
                     </span>
                 </td>
                 <td data-dgr-raw-sort-value="{{ reg.descripcion|lower }}" data-dgr-raw-filter-value="{{ reg.descripcion|lower }}">
                     {{ reg.descripcion }}
                 </td>
-                <td data-dgr-raw-sort-value="{% if reg.mostrar_en_panel %}1{% else %}0{% endif %}" data-dgr-raw-filter-value="{% if reg.mostrar_en_panel %}1{% else %}0{% endif %}">
+                <td data-dgr-raw-sort-value="{% if reg.mostrar_en_panel %}1{% else %}0{% endif %}" data-dgr-raw-filter-value="{% if reg.mostrar_en_panel %}1{% else %}0{% endif %}" class="text-center">
                     {% if reg.mostrar_en_panel %}
                         <input type="checkbox" class="form-check-inline" disabled="disabled" checked="checked" />
                     {% else %}

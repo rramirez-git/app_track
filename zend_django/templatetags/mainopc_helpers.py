@@ -191,7 +191,6 @@ def get_apps(context, user_id=0):
                 padre=None, posicion=configApp['mnuopc_position'])
             if opc.exists():
                 opciones.append(opc[0])
-    print(opciones)
     return {
         'apps': [opc for opc in opciones if opc.user_has_option(user)],
     }

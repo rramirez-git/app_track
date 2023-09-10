@@ -247,7 +247,7 @@ class frmUserTop(HorizontalModelForm):
     ]
 
 
-class frmUserTopMe(forms.Form):
+class frmUserTopMe(HorizontalForm):
     """
     Formulario para desplegado en la sección Top
 
