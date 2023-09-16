@@ -1,15 +1,18 @@
 from django.contrib.auth.models import Permission
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.contenttypes.models import ContentType
 
-from zend_django.models import *
-from zend_django.parametrosistema.models import PARAM_TYPES
+from zend_django.models import MenuOpc, ParametroSistema, ParametroUsuario, ParametroUsuarioValor, UserProfile
+from app_catalogo.models import TipoParametro
 
 from .utils import update_permisos
 
 
 def migration():
     update_permisos()
+
+    Group.objects.get_or_create(name="Administrador")
+    Group.objects.get_or_create(name="Pruebas")
 
     if not User.objects.filter(username="admin").exists():
         admin = User.objects.create(
@@ -55,6 +58,9 @@ def migration():
     migrar = MenuOpc.objects.get_or_create(
         nombre="Aplicar Migracion de Datos", padre=conf, posicion=100,
         vista="aplicar_migraciones_vw")[0]
+    
+    cat = MenuOpc.objects.get_or_create(
+        nombre="Catalogos", posicion=75, vista='idx_app_catalogo')[0]
 
     pSetParam = Permission.objects.get_or_create(
         codename="set_parametrosistema",
@@ -111,6 +117,32 @@ def migration():
         Permission.objects.get(codename="delete_parametrousuario"),
         Permission.objects.get(codename="view_parametrousuario"),
         ])
+    
+    opc = MenuOpc.objects.get_or_create(
+        nombre="Tipos de Paramétro",
+        vista="tipoparametro_list",
+        posicion=101,
+        padre=cat
+    )[0]
+    opc.permisos_requeridos.set([
+        Permission.objects.get(codename='add_tipoparametro'),
+        Permission.objects.get(codename='change_tipoparametro'),
+        Permission.objects.get(codename='delete_tipoparametro'),
+        Permission.objects.get(codename='view_tipoparametro'),
+    ])
+
+    tpEntero = TipoParametro.objects.get_or_create(
+        nombre="Entero", tipo_interno="INTEGER")[0]
+    tpCadena = TipoParametro.objects.get_or_create(
+        nombre="Cadena", tipo_interno="STRING")[0]
+    tpTextoLargo = TipoParametro.objects.get_or_create(
+        nombre="Texto Largo", tipo_interno="TEXT")[0]
+    tpImagen = TipoParametro.objects.get_or_create(
+        nombre="Imagen", tipo_interno="PICTURE")[0]
+    tpArchivo = TipoParametro.objects.get_or_create(
+        nombre="Archivo", tipo_interno="FILE")[0]
+    tpDecimal = TipoParametro.objects.get_or_create(
+        nombre="Decimal", tipo_interno="DECIMAL")[0]
 
     if not ParametroSistema.objects.filter(
             seccion='FormAcceso', nombre='main_logo').exists():
@@ -118,7 +150,7 @@ def migration():
             seccion='FormAcceso',
             nombre='main_logo',
             nombre_para_mostrar='Imagen para formulario de acceso',
-            tipo=PARAM_TYPES['IMAGEN'],
+            tipo=tpImagen,
             valor=''
         )
 
@@ -128,7 +160,7 @@ def migration():
             seccion='SitioGeneral',
             nombre='favicon',
             nombre_para_mostrar='Icono (png) para favicon',
-            tipo=PARAM_TYPES['IMAGEN'],
+            tipo=tpImagen,
             valor=''
         )
 
@@ -138,7 +170,7 @@ def migration():
             seccion='SitioGeneral',
             nombre='main_toolbar_logo',
             nombre_para_mostrar='Imagen para menú principal',
-            tipo=PARAM_TYPES['IMAGEN'],
+            tipo=tpImagen,
             valor=''
         )
 
@@ -149,7 +181,7 @@ def migration():
             nombre='site_name',
             nombre_para_mostrar='Nombre del Sitio (para '
             'mostrar en el menú principal)',
-            tipo=PARAM_TYPES['CADENA'],
+            tipo=tpCadena,
             valor='SB'
         )
 
@@ -159,7 +191,7 @@ def migration():
             seccion='SitioGeneral',
             nombre='site_title',
             nombre_para_mostrar='Título del Sitio',
-            tipo=PARAM_TYPES['CADENA'],
+            tipo=tpCadena,
             valor='Sosa Del Bosque'
         )
 
@@ -168,7 +200,7 @@ def migration():
         ParametroUsuario.objects.get_or_create(
             seccion='basic_search',
             nombre='group',
-            tipo=PARAM_TYPES['CADENA'],
+            tipo=tpCadena,
             valor_default=''
         )
 
@@ -177,7 +209,7 @@ def migration():
         ParametroUsuario.objects.get_or_create(
             seccion='basic_search',
             nombre='parametrosistema',
-            tipo=PARAM_TYPES['CADENA'],
+            tipo=tpCadena,
             valor_default=''
         )
 
@@ -186,7 +218,7 @@ def migration():
         ParametroUsuario.objects.get_or_create(
             seccion='basic_search',
             nombre='parametrousuario',
-            tipo=PARAM_TYPES['CADENA'],
+            tipo=tpCadena,
             valor_default=''
         )
 
@@ -195,7 +227,7 @@ def migration():
         ParametroUsuario.objects.get_or_create(
             seccion='basic_search',
             nombre='permission',
-            tipo=PARAM_TYPES['CADENA'],
+            tipo=tpCadena,
             valor_default=''
         )
 
@@ -204,24 +236,26 @@ def migration():
         ParametroUsuario.objects.get_or_create(
             seccion='basic_search',
             nombre='user',
-            tipo=PARAM_TYPES['CADENA'],
+            tipo=tpCadena,
             valor_default=''
         )
 
     ParametroUsuario.objects.get_or_create(
         seccion='general',
         nombre='open_left_menu',
-        tipo=PARAM_TYPES['CADENA'],
+        tipo=tpCadena,
         valor_default='True'
     )
+
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="tipoparametro", tipo=tpCadena)
 
     ParametroSistema.objects.get_or_create(
         seccion="SitioGeneral",
         nombre="left_bar_width",
         nombre_para_mostrar="Ancho barra de menú (px)",
         valor="200",
-        tipo=PARAM_TYPES['ENTERO'],
-        es_multiple=False
+        tipo=tpEntero,
     )
 
     mnuOpc = MenuOpc.objects.get(nombre="Configuracion", vista="")

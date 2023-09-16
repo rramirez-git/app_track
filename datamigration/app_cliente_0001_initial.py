@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 
 from app_catalogo.models import BootstrapColor
 from app_catalogo.models import BootstrapColor
@@ -14,13 +14,18 @@ from app_catalogo.models import TaxonomiaExpediente
 from app_catalogo.models import TipoActividad
 from app_catalogo.models import TipoDocumento
 from app_catalogo.models import UMA
-from zend_django.models import MenuOpc
+from zend_django.models import MenuOpc, ParametroUsuario
+from app_catalogo.models import TipoParametro
 
 from .utils import update_permisos
 
 
 def migration():
     update_permisos()
+
+    Group.objects.get_or_create(name="Cliente")
+    Group.objects.get_or_create(name="Comercial")
+
     app = MenuOpc.objects.get_or_create(
         nombre="Clientes", posicion=50, vista='idx_app_cliente')[0]
     opc = MenuOpc.objects.get_or_create(
@@ -159,7 +164,7 @@ def migration():
     opc = MenuOpc.objects.get_or_create(
         nombre="Colores Bootstrap",
         vista="bootstrapcolor_list",
-        posicion=10,
+        posicion=100,
         padre=cat
     )[0]
     opc.permisos_requeridos.set([
@@ -172,7 +177,7 @@ def migration():
     opc = MenuOpc.objects.get_or_create(
         nombre="Estado Civil",
         vista="estadocivil_list",
-        posicion=11,
+        posicion=102,
         padre=cat
     )[0]
     opc.permisos_requeridos.set([
@@ -185,7 +190,7 @@ def migration():
     opc = MenuOpc.objects.get_or_create(
         nombre="Estatus de Pago",
         vista="estatuspago_list",
-        posicion=12,
+        posicion=103,
         padre=cat
     )[0]
     opc.permisos_requeridos.set([
@@ -198,7 +203,7 @@ def migration():
     opc = MenuOpc.objects.get_or_create(
         nombre="Cuentas de Pago",
         vista="cuentapago_list",
-        posicion=13,
+        posicion=104,
         padre=cat
     )[0]
     opc.permisos_requeridos.set([
@@ -583,3 +588,32 @@ def migration():
     CuentaPago.objects.get_or_create(cuenta_de_pago='Daniel Azteca')
     CuentaPago.objects.get_or_create(cuenta_de_pago='Daniel Banamex')
     CuentaPago.objects.get_or_create(cuenta_de_pago='Sosa del Bosque')
+
+    tpCadena = TipoParametro.objects.get_or_create(
+        nombre="Cadena", tipo_interno="STRING")[0]
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="estatusactividad", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="medioactividad", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="tipoactividad", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="tipodocumento", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="taxonomiaexpediente", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="recursoexterno", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="uma", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="cuantiabasica", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="factoredad", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="bootstrapcolor", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="estadocivil", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="estatuspago", tipo=tpCadena)
+    ParametroUsuario.objects.get_or_create(
+        seccion="basic_search", nombre="cuentapago", tipo=tpCadena)

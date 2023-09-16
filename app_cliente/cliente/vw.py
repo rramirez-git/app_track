@@ -16,6 +16,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.models import Group
 
 from zend_django.user.forms import frmUser
 from zend_django.views import GenericCreate
@@ -23,15 +24,14 @@ from zend_django.views import GenericDelete
 from zend_django.views import GenericList
 from zend_django.views import GenericRead
 from zend_django.views import GenericUpdate
-
+from zend_django.templatetags.utils import GenerateReadCRUDToolbar
+from zend_django.templatetags.op_helpers import crud_label
 from app_cliente.direccion.forms import frmDireccion
 
-from .forms import frmCliente as base_form
-from .forms import frmClienteContacto
-from .forms import frmClienteObservaciones
-from .forms import frmClienteOtro
-from .forms import frmClienteTrabajo
-from .forms import frmClienteUsuario
+from .forms import frmCteGenerales as base_form
+from .forms import frmCteUser
+from .forms import frmCteOtros
+from .forms import frmCteContacto
 from .models import Cliente as main_model
 
 
@@ -76,29 +76,44 @@ class Read(GenericRead):
         if not self.main_data_model.objects.filter(pk=pk).exists():
             return HttpResponseRedirect(reverse('item_no_encontrado'))
         obj = self.main_data_model.objects.get(pk=pk)
+        fCUser = frmCteUser(
+            instance=obj.userprofile.user,
+            initial={
+                'apellido_materno': obj.userprofile.apellido_materno,
+                'password': obj.contraseña})
+        fCGenerales = self.base_data_form(instance=obj)
+        fCOtros = frmCteOtros(initial={
+            'obs_semanas_cotizadas': obj.obs_semanas_cotizadas,
+            'obs_homonimia': obj.obs_homonimia,
+            'obs_duplicidad': obj.obs_duplicidad,
+            'observaciones': obj.observaciones,
+        })
+        fCContacto = frmCteContacto(
+            instance=obj.userprofile,
+            initial={
+                'email': obj.userprofile.user.email,
+                'telefono_oficina': obj.telefono_oficina,
+                'otro_telefono': obj.otro_telefono})
+        fDireccion = frmDireccion(instance=obj.domicilio)
         forms = {
             'top': [{
                 'title': 'Usuario',
-                'form': frmClienteUsuario(instance=obj)}, ],
+                'form': fCUser}, ],
             'bottom': [{
                 'title': 'Observaciones',
-                'form': frmClienteObservaciones(instance=obj)}, ],
+                'form': fCOtros}, ],
             'left': [{
                 'title': 'Datos Generales',
-                'form': frmClienteTrabajo(instance=obj)}, ],
+                'form': fCGenerales}, ],
             'right': [
                 {
                     'title': 'Contacto',
-                    'form': frmClienteContacto(instance=obj)
-                    },
+                    'form': fCContacto
+                },
                 {
                     'title': 'Dirección',
-                    'form': frmDireccion(instance=obj.domicilio)
-                    },
-                {
-                    'title': 'Otros',
-                    'form': frmClienteOtro(instance=obj)
-                    }, ],
+                    'form': fDireccion
+                }, ],
         }
         toolbar = GenerateReadCRUDToolbar(
             request, self.model_name, obj, self.main_data_model)
@@ -123,72 +138,87 @@ class Create(GenericCreate):
     app = 'cliente'
 
     def get(self, request):
+        fCUser = frmCteUser()
+        fCGenerales = self.base_data_form()
+        fCOtros = frmCteOtros()
+        fCContacto = frmCteContacto()
+        fDireccion = frmDireccion()
         forms = {
             'top': [{
                 'title': 'Usuario',
-                'form': frmClienteUsuario()}, ],
+                'form': fCUser}, ],
             'bottom': [{
                 'title': 'Observaciones',
-                'form': frmClienteObservaciones()}, ],
+                'form': fCOtros}, ],
             'left': [{
                 'title': 'Datos Generales',
-                'form': frmClienteTrabajo()}, ],
+                'form': fCGenerales}, ],
             'right': [
                 {
                     'title': 'Contacto',
-                    'form': frmClienteContacto()
-                    },
+                    'form': fCContacto
+                },
                 {
                     'title': 'Dirección',
-                    'form': frmDireccion()
-                    },
-                {
-                    'title': 'Otros',
-                    'form': frmClienteOtro()
-                    }, ],
+                    'form': fDireccion
+                }, ],
         }
         return self.base_render(request, forms)
 
     def post(self, request):
-        form = self.base_data_form(request.POST)
+        fCUser = frmCteUser(request.POST)
+        fCGenerales = self.base_data_form(request.POST)
+        fCOtros = frmCteOtros(request.POST)
+        fCContacto = frmCteContacto(request.POST)
+        fDireccion = frmDireccion(request.POST)
         forms = {
             'top': [{
                 'title': 'Usuario',
-                'form': frmClienteUsuario(request.POST)}, ],
+                'form': fCUser}, ],
             'bottom': [{
                 'title': 'Observaciones',
-                'form': frmClienteObservaciones(request.POST)}, ],
+                'form': fCOtros}, ],
             'left': [{
                 'title': 'Datos Generales',
-                'form': frmClienteTrabajo(request.POST)}, ],
+                'form': fCGenerales}, ],
             'right': [
                 {
                     'title': 'Contacto',
-                    'form': frmClienteContacto(request.POST)
-                    },
+                    'form': fCContacto
+                },
                 {
                     'title': 'Dirección',
-                    'form': frmDireccion(request.POST)
-                    },
-                {
-                    'title': 'Otros',
-                    'form': frmClienteOtro(request.POST)
-                    }, ],
+                    'form': fDireccion
+                }, ],
         }
-        if form.is_valid():
-            user = frmUser(request.POST).save()
-            user.set_password(form.cleaned_data['contraseña'])
-            userprofile = UserProfile.objects.create(
-                apellido_materno=form.cleaned_data['apellido_materno'],
-                telefono=form.cleaned_data['telefono'],
-                celular=form.cleaned_data['celular'],
-                whatsapp=form.cleaned_data['whatsapp'],
-                user=user
-            )
-            direccion = forms['right'][1]['form'].save()
-            obj = form.save(commit=False)
+        if fCUser.is_valid() and fCGenerales.is_valid() and \
+                fCOtros.is_valid() and fCContacto.is_valid() \
+                and fDireccion.is_valid():
+            user = fCUser.save()
+            user.email = request.POST.get('email', '')
+            user.set_password(request.POST.get('password', ''))
+            user.groups.set((Group.objects.get(name="Cliente"), ))
+            user.save()
+            userprofile = fCContacto.save(commit=False)
+            userprofile.user = user
+            userprofile.apellido_materno = request.POST.get(
+                'apellido_materno', '')
+            userprofile.save()
+            direccion = fDireccion.save()
+            obj = fCGenerales.save(commit=False)
             obj.userprofile = userprofile
-            obj.direccion = direccion
+            obj.domicilio = direccion
+            obj.contraseña = request.POST.get('password', '')
+            obj.telefono_oficina = request.POST.get('telefono_oficina', '')
+            obj.otro_telefono = request.POST.get('otro_telefono', '')
+            obj.observaciones = request.POST.get(
+                "observaciones", "")
+            obj.obs_semanas_cotizadas = request.POST.get(
+                "obs_semanas_cotizadas", "")
+            obj.obs_homonimia = request.POST.get(
+                "obs_homonimia", "")
+            obj.obs_duplicidad = request.POST.get(
+                "obs_duplicidad", "")
             obj.save()
             return HttpResponseRedirect(reverse(
                 f'{self.model_name}_read',
@@ -200,6 +230,7 @@ class Update(GenericUpdate):
     titulo = "Cliente"
     model_name = "cliente"
     main_data_model = main_model
+    base_data_form = base_form
     app = 'cliente'
 
     def base_render(self, request, forms):
@@ -220,29 +251,44 @@ class Update(GenericUpdate):
         if not self.main_data_model.objects.filter(pk=pk).exists():
             return HttpResponseRedirect(reverse('item_no_encontrado'))
         obj = self.main_data_model.objects.get(pk=pk)
+        fCUser = frmCteUser(
+            instance=obj.userprofile.user,
+            initial={
+                'apellido_materno': obj.userprofile.apellido_materno,
+                'password': obj.contraseña})
+        fCGenerales = self.base_data_form(instance=obj)
+        fCOtros = frmCteOtros(initial={
+            'obs_semanas_cotizadas': obj.obs_semanas_cotizadas,
+            'obs_homonimia': obj.obs_homonimia,
+            'obs_duplicidad': obj.obs_duplicidad,
+            'observaciones': obj.observaciones,
+        })
+        fCContacto = frmCteContacto(
+            instance=obj.userprofile,
+            initial={
+                'email': obj.userprofile.user.email,
+                'telefono_oficina': obj.telefono_oficina,
+                'otro_telefono': obj.otro_telefono})
+        fDireccion = frmDireccion(instance=obj.domicilio)
         forms = {
             'top': [{
                 'title': 'Usuario',
-                'form': frmClienteUsuario(instance=obj)}, ],
+                'form': fCUser}, ],
             'bottom': [{
                 'title': 'Observaciones',
-                'form': frmClienteObservaciones(instance=obj)}, ],
+                'form': fCOtros}, ],
             'left': [{
                 'title': 'Datos Generales',
-                'form': frmClienteTrabajo(instance=obj)}, ],
+                'form': fCGenerales}, ],
             'right': [
                 {
                     'title': 'Contacto',
-                    'form': frmClienteContacto(instance=obj)
-                    },
+                    'form': fCContacto
+                },
                 {
                     'title': 'Dirección',
-                    'form': frmDireccion(instance=obj.domicilio)
-                    },
-                {
-                    'title': 'Otros',
-                    'form': frmClienteOtro(instance=obj)
-                    }, ],
+                    'form': fDireccion
+                }, ],
         }
         return self.base_render(request, forms)
 
@@ -251,48 +297,79 @@ class Update(GenericUpdate):
             return HttpResponseRedirect(reverse('item_no_encontrado'))
         obj = self.main_data_model.objects.get(pk=pk)
         form = self.base_data_form(instance=obj, data=request.POST)
+        fCUser = frmCteUser(
+            instance=obj.userprofile.user,
+            initial={
+                'apellido_materno': obj.userprofile.apellido_materno,
+                'password': obj.contraseña},
+            data=request.POST)
+        fCGenerales = self.base_data_form(instance=obj,
+        data=request.POST)
+        fCOtros = frmCteOtros(initial={
+            'obs_semanas_cotizadas': obj.obs_semanas_cotizadas,
+            'obs_homonimia': obj.obs_homonimia,
+            'obs_duplicidad': obj.obs_duplicidad,
+            'observaciones': obj.observaciones,
+            },
+            data=request.POST)
+        fCContacto = frmCteContacto(
+            instance=obj.userprofile,
+            initial={
+                'email': obj.userprofile.user.email,
+                'telefono_oficina': obj.telefono_oficina,
+                'otro_telefono': obj.otro_telefono},
+            data=request.POST)
+        fDireccion = frmDireccion(
+            instance=obj.domicilio,
+            data=request.POST)
         forms = {
             'top': [{
                 'title': 'Usuario',
-                'form': frmClienteUsuario(
-                    instance=obj, data=request.POST)}, ],
+                'form': fCUser}, ],
             'bottom': [{
                 'title': 'Observaciones',
-                'form': frmClienteObservaciones(
-                    instance=obj, data=request.POST)}, ],
+                'form': fCOtros}, ],
             'left': [{
                 'title': 'Datos Generales',
-                'form': frmClienteTrabajo(
-                    instance=obj, data=request.POST)}, ],
+                'form': fCGenerales}, ],
             'right': [
                 {
                     'title': 'Contacto',
-                    'form': frmClienteContacto(
-                        instance=obj, data=request.POST)
-                    },
+                    'form': fCContacto
+                },
                 {
                     'title': 'Dirección',
-                    'form': frmDireccion(
-                        instance=obj.direccion, data=request.POST)
-                    },
-                {
-                    'title': 'Otros',
-                    'form': frmClienteOtro(
-                        instance=obj, data=request.POST)
-                    }, ],
+                    'form': fDireccion
+                }, ],
         }
-        if form.is_valid():
-            user = frmUser(
-                instance=obj.userprofile.user, data=request.POST).save()
-            user.set_password(form.cleaned_data['contraseña'])
-            obj.userprofile.apellido_materno = form.cleaned_data[
-                'apellido_materno'],
-            obj.userprofile.telefono = form.cleaned_data['telefono']
-            obj.userprofile.celular = form.cleaned_data['celular']
-            obj.userprofile.whatsapp = form.cleaned_data['whatsapp']
-            obj.userprofile.save()
-            forms['right'][1]['form'].save()
-            form.save()
+        if fCUser.is_valid() and fCGenerales.is_valid() and \
+                fCOtros.is_valid() and fCContacto.is_valid() \
+                and fDireccion.is_valid():
+            user = fCUser.save()
+            user.email = request.POST.get('email', '')
+            user.set_password(request.POST.get('password', ''))
+            user.groups.set((Group.objects.get(name="Cliente"), ))
+            user.save()
+            userprofile = fCContacto.save()
+            userprofile.apellido_materno = request.POST.get(
+                'apellido_materno', '')
+            userprofile.save()
+            direccion = fDireccion.save()
+            obj = fCGenerales.save()
+            obj.userprofile = userprofile
+            obj.domicilio = direccion
+            obj.contraseña = request.POST.get('password', '')
+            obj.telefono_oficina = request.POST.get('telefono_oficina', '')
+            obj.otro_telefono = request.POST.get('otro_telefono', '')
+            obj.observaciones = request.POST.get(
+                "observaciones", "")
+            obj.obs_semanas_cotizadas = request.POST.get(
+                "obs_semanas_cotizadas", "")
+            obj.obs_homonimia = request.POST.get(
+                "obs_homonimia", "")
+            obj.obs_duplicidad = request.POST.get(
+                "obs_duplicidad", "")
+            obj.save()
             return HttpResponseRedirect(reverse(
                 f'{self.model_name}_read',
                 kwargs={'pk': obj.pk}))
@@ -300,7 +377,7 @@ class Update(GenericUpdate):
 
 
 class Delete(GenericDelete):
-    model_name = "user"
+    model_name = "cliente"
     main_data_model = main_model
 
     def get(self, request, pk):
@@ -311,19 +388,7 @@ class Delete(GenericDelete):
         user = userprofile.user
         try:
             obj.delete()
-            return HttpResponseRedirect(reverse(f'{self.model_name}_list'))
-        except ProtectedError:
-            return HttpResponseRedirect(reverse('item_con_relaciones'))
-        except IntegrityError:
-            return HttpResponseRedirect(reverse('item_con_relaciones'))
-        try:
             userprofile.delete()
-            return HttpResponseRedirect(reverse(f'{self.model_name}_list'))
-        except ProtectedError:
-            return HttpResponseRedirect(reverse('item_con_relaciones'))
-        except IntegrityError:
-            return HttpResponseRedirect(reverse('item_con_relaciones'))
-        try:
             user.delete()
             return HttpResponseRedirect(reverse(f'{self.model_name}_list'))
         except ProtectedError:

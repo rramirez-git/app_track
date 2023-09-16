@@ -11,3 +11,4 @@ from .taxonomiaExpediente.models import TaxonomiaExpediente
 from .tipoActividad.models import TipoActividad
 from .tipoDocumento.models import TipoDocumento
 from .uma.models import UMA
+from .tipoParametro.models import TipoParametro

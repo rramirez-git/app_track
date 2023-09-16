@@ -18,7 +18,7 @@
 
         {% for parametro in seccion.list %}
 
-                {% if "PICTURE" == parametro.tipo %}
+                {% if "PICTURE" == parametro.tipo.tipo_interno %}
 
                     <div class="form-row">
                         <div class="col-md-3 form-group">
@@ -32,7 +32,7 @@
 
                 {% else %}
 
-                    {% if "STRING" == parametro.tipo %}
+                    {% if "STRING" == parametro.tipo.tipo_interno %}
 
                         <div class="form-row">
                             <div class="col form-group">
@@ -43,7 +43,7 @@
 
                     {% else %}
 
-                        {% if "INTEGER" == parametro.tipo %}
+                        {% if "INTEGER" == parametro.tipo.tipo_interno %}
 
                             <div class="form-row">
                                 <div class="col form-group">
@@ -54,7 +54,7 @@
 
                         {% else %}
 
-                            {% if "TEXT" == parametro.tipo %}
+                            {% if "TEXT" == parametro.tipo.tipo_interno %}
 
                                 <div class="form-row">
                                     <div class="col form-group">
@@ -65,7 +65,7 @@
 
                             {% else %}
 
-                                {% if "FILE" == parametro.tipo %}
+                                {% if "FILE" == parametro.tipo.tipo_interno %}
 
                                     <div class="form-row">
                                         <div class="col-md-3 form-group">
@@ -81,7 +81,7 @@
 
                                 {% else %}
 
-                                    {% if "DECIMAL" == parametro.tipo %}
+                                    {% if "DECIMAL" == parametro.tipo.tipo_interno %}
 
                                         <div class="form-row">
                                             <div class="col form-group">

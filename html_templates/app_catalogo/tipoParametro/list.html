@@ -5,23 +5,23 @@
 {% block content %}
 
 <script type="text/javascript">
-    let url_update = "{% url 'cliente_update' pk='__recordid__' %}";
-    let url_delete = "{% url 'cliente_delete' pk='__recordid__' %}";
-    let url_read = "{% url 'cliente_read' pk='__recordid__' %}";
+    let url_update = "{% url 'tipoparametro_update' pk='__recordid__' %}";
+    let url_delete = "{% url 'tipoparametro_delete' pk='__recordid__' %}";
+    let url_read = "{% url 'tipoparametro_read' pk='__recordid__' %}";
 </script>
 
 <div class="btn-group d-none" role="group" aria-label="Acciones">
-    {% if perms.zend_django.add_cliente %}
-    <a data-action="create" href="{% url 'cliente_create' %}" class="btn btn-outline-secondary" role="button" title="{% crud_label 'create' %}">
+    {% if perms.zend_django.add_tipoparametro %}
+    <a data-action="create" href="{% url 'tipoparametro_create' %}" class="btn btn-outline-secondary" role="button" title="{% crud_label 'create' %}">
         {% crud_icon 'create' %}
     </a>
     {% endif %}
-    {% if perms.zend_django.change_cliente %}
+    {% if perms.zend_django.change_tipoparametro %}
     <button type="button" onclick="dataGridResultsGlobals.update_many()" data-action="update" class="btn btn-outline-secondary" role="button" title="{% crud_label 'update' %}">
             {% crud_icon 'update' %}
     </button>
     {% endif %}
-    {% if perms.zend_django.delete_cliente %}
+    {% if perms.zend_django.delete_tipoparametro %}
     <button type="button" data-action="delete" onclick="dataGridResultsGlobals.delete_many()" class="btn btn-outline-secondary" role="button" title="{% crud_label 'delete' %}">
         {% crud_icon 'delete' %}
     </button>
@@ -45,27 +45,11 @@
             <th class="d-none"></th>
             <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="no" data-dgr-col-link-detail="yes"
                 data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
-                Cliente
+                Tipo de Parametro
             </th>
             <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="no" data-dgr-col-link-detail="no"
                 data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
-                Tipo de Expediente
-            </th>
-            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="no"
-                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
-                CURP
-            </th>
-            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="no"
-                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
-                RFC
-            </th>
-            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="no"
-                data-dgr-col-filterable="yes" data-dgr-col-datatype="string">
-                NSS
-            </th>
-            <th data-dgr-col-sorteable="yes" data-dgr-col-hiddenable="yes" data-dgr-col-link-detail="no"
-                data-dgr-col-filterable="yes" data-dgr-col-datatype="number">
-                Fecha de Nacimiento
+                Tipo Interno
             </th>
             <th class="text-center">
                 <div class="d-inline-block" title="Filtros">
@@ -78,15 +62,11 @@
     </thead>
     <tfoot>
         <tr>
-            <th>Cliente</th>
-            <th>Tipo de Expediente</th>
-            <th>CURP</th>
-            <th>RFC</th>
-            <th>NSS</th>
-            <th>Fecha de Nacimiento</th>
+            <th>Tipo de Parametro</th>
+            <th>Tipo Interno</th>
             <th colspan="3" class="text-center">
-                {% if perms.zend_django.add_cliente %}
-                <a data-action="create" href="{% url 'cliente_create' %}" class="btn btn-outline-secondary" role="button" title="{% crud_label 'create' %}">
+                {% if perms.zend_django.add_tipoparametro %}
+                <a data-action="create" href="{% url 'tipoparametro_create' %}" class="btn btn-outline-secondary" role="button" title="{% crud_label 'create' %}">
                     {% crud_icon 'create' %} {% crud_label 'create' %}
                 </a>
                 {% endif %}
@@ -103,20 +83,8 @@
                 <td data-dgr-raw-sort-value="{{ reg|lower }}" data-dgr-raw-filter-value="{{ reg|lower }}">
                     {{ reg }}
                 </td>
-                <td data-dgr-raw-sort-value="{{ reg.tipo|lower }}" data-dgr-raw-filter-value="{{ reg.tipo|lower }}">
-                    {{ reg.tipo }}
-                </td>
-                <td data-dgr-raw-sort-value="{{ reg.curp|lower }}" data-dgr-raw-filter-value="{{ reg.curp|lower }}">
-                    {{ reg.CURP }}
-                </td>
-                <td data-dgr-raw-sort-value="{{ reg.rfc|lower }}" data-dgr-raw-filter-value="{{ reg.rfc|lower }}">
-                    {{ reg.RFC }}
-                </td>
-                <td data-dgr-raw-sort-value="{{ reg.nss|lower }}" data-dgr-raw-filter-value="{{ reg.nss|lower }}">
-                    {{ reg.NSS }}
-                </td>
-                <td data-dgr-raw-sort-value="{{ reg.fecha_nacimiento|date:'Ymd' }}">
-                    {{ reg.fecha_nacimiento }}
+                <td data-dgr-raw-sort-value="{{ reg.tipo_interno|lower }}" data-dgr-raw-filter-value="{{ reg.tipo_interno|lower }}">
+                    {{ reg.tipo_interno }}
                 </td>
                 <td></td>
             </tr>

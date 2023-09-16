@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 
 from .utils import update_permisos
 from zend_django.models import MenuOpc
@@ -25,6 +25,14 @@ def migration():
         posicion=1002
     )[0]
     opc.permisos_requeridos.set([
+        Permission.objects.get(codename='add_mine_fav'),
+        Permission.objects.get(codename='change_mine_fav'),
+        Permission.objects.get(codename='delete_mine_fav'),
+        Permission.objects.get(codename='view_mine_fav'),
+    ])
+
+    gpoFavoritos = Group.objects.get_or_create(name="Admin Mis Favoritos")[0]
+    gpoFavoritos.permissions.set([
         Permission.objects.get(codename='add_mine_fav'),
         Permission.objects.get(codename='change_mine_fav'),
         Permission.objects.get(codename='delete_mine_fav'),

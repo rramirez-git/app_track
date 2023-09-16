@@ -7,53 +7,14 @@ Modelos
 
 Constantes
 ----------
-- PARAM_TYPES
-- PARAM_TYPES_Tuples
 - parametro_upload_to
 """
 from django.db import models
+from app_catalogo.models import TipoParametro
 
 testing = True
 
 parametro_upload_to = "parametrosistema"
-
-PARAM_TYPES = {
-    'ENTERO': 'INTEGER',
-    'CADENA': 'STRING',
-    'TEXTO_LARGO': 'TEXT',
-    'IMAGEN': 'PICTURE',
-    'ARCHIVO': 'FILE',
-    'DECIMAL': 'DECIMAL',
-}
-
-PARAM_TYPES_Tuples = (
-        (PARAM_TYPES['ENTERO'], 'Entero'),
-        (PARAM_TYPES['CADENA'], 'Cadena'),
-        (PARAM_TYPES['TEXTO_LARGO'], 'Texto Largo'),
-        (PARAM_TYPES['IMAGEN'], 'Imagen'),
-        (PARAM_TYPES['ARCHIVO'], 'Archivo'),
-        (PARAM_TYPES['DECIMAL'], 'Decimal'),
-    )
-
-
-def get_param_type_to_show(type):
-    """
-    Obtiene el valor para mostrar de un tipo de parámetro
-
-    Parameters
-    ----------
-    type : string
-        Tipo de parámetro [ENTERO, CADENA, TEXTO_LARGO, IMAGEN, ARCHIVO]
-
-    Returns
-    -------
-    string
-        Valor para mostrar del tipo de parámetro
-    """
-    for param in PARAM_TYPES_Tuples:
-        if param[0] == type:
-            return param[1]
-    return ""
 
 
 class ParametroSistema(models.Model):
@@ -64,9 +25,10 @@ class ParametroSistema(models.Model):
     nombre = models.CharField(max_length=100)
     nombre_para_mostrar = models.CharField(max_length=100)
     valor = models.TextField()
-    tipo = models.CharField(
-        max_length=20, choices=PARAM_TYPES_Tuples,
-        default=PARAM_TYPES['CADENA'])
+    tipo = models.ForeignKey(
+        to=TipoParametro,
+        on_delete=models.RESTRICT,
+        related_name="+")
     es_multiple = models.BooleanField(default=False)
 
     class Meta:
@@ -83,7 +45,7 @@ class ParametroSistema(models.Model):
         """
         Tipo de parámetro, version para mostrar
         """
-        return get_param_type_to_show(self.tipo)
+        return f"{self.tipo}"
 
     @staticmethod
     def get(seccion, nombre):

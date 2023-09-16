@@ -10,7 +10,11 @@ from zend_django.models import UserProfile
 
 
 def UserProfilePkCliente():
-    return [cte.userprofile.pk for cte in Cliente.objects.all()]
+    try:
+        return [cte.userprofile.pk for cte in Cliente.objects.all()]
+    except NameError:
+        print("*********************** NO EXISTE ***********************")
+        return list()
 
 
 def UserProfilePkNoCliente():

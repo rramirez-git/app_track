@@ -10,9 +10,7 @@ Modelos
 from django.contrib.auth.models import User
 from django.db import models
 
-from zend_django.parametrosistema.models import PARAM_TYPES
-from zend_django.parametrosistema.models import PARAM_TYPES_Tuples
-from zend_django.parametrosistema.models import get_param_type_to_show
+from app_catalogo.models import TipoParametro
 
 testing = True
 
@@ -24,9 +22,10 @@ class ParametroUsuario(models.Model):
     seccion = models.CharField(max_length=100)
     nombre = models.CharField(max_length=100)
     valor_default = models.TextField(blank=True)
-    tipo = models.CharField(
-        max_length=20, choices=PARAM_TYPES_Tuples,
-        default=PARAM_TYPES['CADENA'])
+    tipo = models.ForeignKey(
+        to=TipoParametro,
+        on_delete=models.RESTRICT,
+        related_name="+")
     es_multiple = models.BooleanField(default=False)
 
     class Meta:
@@ -43,7 +42,7 @@ class ParametroUsuario(models.Model):
         """
         Tipo de parámetro, version para mostrar
         """
-        return get_param_type_to_show(self.tipo)
+        return f"{self.tipo}"
 
     @staticmethod
     def get_default(seccion, nombre):
@@ -107,7 +106,8 @@ class ParametroUsuario(models.Model):
             try:
                 param = ParametroUsuario.objects.get(
                     seccion=seccion, nombre=nombre)
-                return int(val) if param == PARAM_TYPES['ENTERO'] else val
+                tpEntero = TipoParametro.objects.get(tipo_interno="INTEGER")
+                return int(val) if param.tipo.pk == tpEntero.pk else val
             except ParametroUsuario.DoesNotExist:
                 if testing:
                     return ""

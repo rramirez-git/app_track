@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 
 from zend_django.templatetags.op_labels import CRUD_labels
 
@@ -8,6 +8,13 @@ def migration():
 
 
 def update_permisos():
+    perfilSuperAdmin = Group.objects.get_or_create(name="SuperAdministrador")[0]
+    perfilSuperAdmin.permissions.set(
+        Permission.objects.all())
+    perfilSuperAdmin = Group.objects.get_or_create(name="Solo Lectura")[0]
+    perfilSuperAdmin.permissions.set(
+        Permission.objects.filter(codename__icontains='view_'))
+
     for p in Permission.objects.filter(codename__icontains='add_'):
         p.name = str(p.name).replace('Can add', 'Agregar')
         p.save()

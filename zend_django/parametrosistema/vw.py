@@ -119,17 +119,17 @@ class Set(View):
         if "singles" == request.POST.get('action'):
             parametros = self.main_data_model.objects.filter(es_multiple=False)
             for parametro in parametros:
-                if ("INTEGER" == parametro.tipo
-                        or "STRING" == parametro.tipo
-                        or "DECIMAL" == parametro.tipo
-                        or "TEXT" == parametro.tipo):
+                if ("INTEGER" == parametro.tipo.tipo_interno
+                        or "STRING" == parametro.tipo.tipo_interno
+                        or "DECIMAL" == parametro.tipo.tipo_interno
+                        or "TEXT" == parametro.tipo.tipo_interno):
                     valor = request.POST.get(
                         f'{parametro.seccion}_{parametro.nombre}')
                     if valor is not None:
                         parametro.valor = valor
                         parametro.save()
-                elif ("PICTURE" == parametro.tipo
-                        or "FILE" == parametro.tipo):
+                elif ("PICTURE" == parametro.tipo.tipo_interno
+                        or "FILE" == parametro.tipo.tipo_interno):
                     file = request.FILES.get(
                         f'{parametro.seccion}_{parametro.nombre}')
                     if file is not None:

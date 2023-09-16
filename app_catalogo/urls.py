@@ -20,8 +20,6 @@ urlpatterns = [
           include('app_catalogo.taxonomiaExpediente.urls')),
      path('estado-civil/',
           include('app_catalogo.estadoCivil.urls')),
-     path('color-bootstrap/',
-          include('app_catalogo.bootstrapColor.urls')),
      path('cuantia-basica/',
           include('app_catalogo.cuantiaBasica.urls')),
      path('estatus-actividad/',
@@ -42,4 +40,10 @@ urlpatterns = [
           include('app_catalogo.estatusPago.urls')),
      path('cuenta-de-pago/',
           include('app_catalogo.cuentaPago.urls')),
+
+
+     path('color-bootstrap/',
+          include('app_catalogo.bootstrapColor.urls')),
+     path('tipo-parametro/',
+          include('app_catalogo.tipoParametro.urls')),
 ]
