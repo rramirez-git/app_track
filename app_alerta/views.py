@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from zend_django.views import GenericAppRootView
 
-# Create your views here.
+
+class AlertasView(GenericAppRootView):
+    html_template = "zend_django/idx_empty.html"
+    titulo = "Alertas"
+    titulo_descripcion = ""
+    toolbar = None
+    app = 'alerta'

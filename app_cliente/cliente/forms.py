@@ -1,9 +1,14 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
-from zend_django.hiperforms import HorizontalModelForm, HorizontalForm
+from app_alerta.models import Alerta
+from app_nota.models import Nota
+from zend_django.hiperforms import HorizontalForm
+from zend_django.hiperforms import HorizontalModelForm
 
-from .models import Cliente, UserProfile
+from .models import Cliente
+from .models import UserProfile
 from .models import UserProfileResponsables
 
 
@@ -52,7 +57,7 @@ class frmCteContacto(HorizontalModelForm):
             'telefono_oficina': forms.TextInput(attrs={'type': 'tel'}),
             'otro_telefono': forms.TextInput(attrs={'type': 'tel'}),
         }
-    
+
     field_order = [
         'email',
         'telefono',
@@ -113,16 +118,75 @@ class frmCteGenerales(HorizontalModelForm):
 class frmCteOtros(HorizontalForm):
     obs_semanas_cotizadas = forms.CharField(
         required=False,
-        widget=forms.Textarea(attrs={"rows":"5"}),
+        widget=forms.Textarea(attrs={"rows": "5"}),
         label="Semanas Cotizadas")
     obs_homonimia = forms.CharField(
         required=False,
-        widget=forms.Textarea(attrs={"rows":"5"}),
+        widget=forms.Textarea(attrs={"rows": "5"}),
         label="Homonimia")
     obs_duplicidad = forms.CharField(
         required=False,
-        widget=forms.Textarea(attrs={"rows":"5"}),
+        widget=forms.Textarea(attrs={"rows": "5"}),
         label="Duplicidad")
     observaciones = forms.CharField(
-        required=False, widget=forms.Textarea(attrs={"rows":"5"}))
-    
+        required=False, widget=forms.Textarea(attrs={"rows": "5"}))
+
+
+class frmNota(HorizontalModelForm):
+    fecha_notificacion = forms.DateField(
+        required=False,
+        label="¿Crear una notificación?",
+        widget=forms.TextInput(attrs={'type': 'date'}))
+
+    class Meta:
+        model = Nota
+        fields = [
+            'nota'
+        ]
+        widgets = {
+            'nota': forms.Textarea(attrs={'rows': "5"})
+        }
+
+    field_order = [
+        'nota',
+        'fecha_notificacion'
+    ]
+
+
+class frmAlerta(HorizontalModelForm):
+
+    class Meta:
+        model = Alerta
+        fields = [
+            'nota',
+            'fecha_alerta',
+        ]
+        widgets = {
+            'nota': forms.Textarea(attrs={'rows': "5"}),
+            'fecha_alerta': forms.TextInput(attrs={'type': 'date'}),
+        }
+
+    field_order = [
+        'nota',
+        'fecha_alerta',
+        'cliente_confirma',
+    ]
+
+
+class frmImportar(HorizontalForm):
+    cliente_inicial = forms.IntegerField(
+        min_value=1, widget=forms.TextInput(attrs={'type': 'number'}))
+    cliente_final = forms.IntegerField(
+        min_value=1, widget=forms.TextInput(attrs={'type': 'number'}))
+    sitio_de_descarga = forms.URLField()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        inicio = int(cleaned_data.get("cliente_inicial"))
+        fin = int(cleaned_data.get("cliente_final"))
+
+        if inicio > fin:
+            raise ValidationError(
+                "El cliente inicial debe ser menor que el cliente final",
+                code="Inicial > Final"
+            )

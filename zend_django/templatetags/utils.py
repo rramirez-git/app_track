@@ -132,7 +132,7 @@ def GetNextPrevObject(instance, prev=False, qs=None, loop=False):
         key = "%s__%s" % (field, this_lookup)
         q_kwargs[key] = get_model_attr(instance, field)
         if q_kwargs[key] is None:
-            del(q_kwargs[key])
+            del q_kwargs[key]
         q_list.append(models.Q(**q_kwargs))
         prev_fields.append(field)
     try:

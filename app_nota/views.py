@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from zend_django.views import GenericAppRootView
 
-# Create your views here.
+
+class NotasView(GenericAppRootView):
+    html_template = "zend_django/idx_empty.html"
+    titulo = "Notas"
+    titulo_descripcion = ""
+    toolbar = None
+    app = 'nota'

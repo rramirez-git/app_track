@@ -10,6 +10,7 @@ Vistas
 - Delete
 - ResetPassword
 """
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import User as main_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
@@ -137,6 +138,7 @@ class Create(GenericCreate):
         if form.is_valid():
             obj = form.save()
             obj.set_password(form.cleaned_data['password'])
+            obj.groups.add(Group.objects.get(name="Basico"))
             obj.save()
             UserProfile.objects.create(
                 apellido_materno=form.cleaned_data['apellido_materno'],
@@ -209,6 +211,8 @@ class Update(GenericUpdate):
             obj.profile.celular = form.cleaned_data['celular']
             obj.profile.whatsapp = form.cleaned_data['whatsapp']
             obj.profile.save()
+            obj.groups.add(Group.objects.get(name="Basico"))
+            obj.save()
             return HttpResponseRedirect(reverse(
                 f'{self.model_name}_read',
                 kwargs={'pk': obj.pk}))

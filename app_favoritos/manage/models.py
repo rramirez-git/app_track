@@ -26,6 +26,8 @@ class Favorito(models.Model):
             ('add_mine_fav', 'Agregar Mis Favoritos'),
             ('change_mine_fav', 'Actualizar Mis Favoritos'),
             ('delete_mine_fav', 'Eliminar Mis Favoritos'),
+            ('add_ad_mine_fav', 'Agregar Mis Favoritos (Acceso Directo)'),
+            ('delete_ad_mine_fav', 'Eliminar Mis Favoritos (Acceso Directo)'),
         ]
         unique_together = [
             ['usuario', 'url']

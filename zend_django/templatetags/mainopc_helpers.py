@@ -147,7 +147,7 @@ def get_apps(context, user_id=0):
         config = json.load(json_file)
     opciones = []
     for key, configApp in config.items():
-        if configApp['display_as_app'] != hid:
+        if configApp['display_as_app']:
             opciones.append(MenuOpc.objects.get(
                 padre=None, posicion=configApp['mnuopc_position']))
     return {
@@ -155,45 +155,45 @@ def get_apps(context, user_id=0):
     }
 
 
-@register.inclusion_tag(
-    'zend_django/menuopc/get_apps.html', takes_context=True)
-def get_apps(context, user_id=0):
-    """
-    Inclusion tag: {% get_apps %}
-    Genera las etiquetas para generar el menú de Apps con base en las
-    opciones de permisos en el menú principal
-    Las opciones del menú en nivel 1 son las Apps
+# @register.inclusion_tag(
+#     'zend_django/menuopc/get_apps.html', takes_context=True)
+# def get_apps(context, user_id=0):
+#     """
+#     Inclusion tag: {% get_apps %}
+#     Genera las etiquetas para generar el menú de Apps con base en las
+#     opciones de permisos en el menú principal
+#     Las opciones del menú en nivel 1 son las Apps
 
-    Parameters
-    ----------
-    context : ContextRequest
-    user_id : int [0] User.pk
+#     Parameters
+#     ----------
+#     context : ContextRequest
+#     user_id : int [0] User.pk
 
-    Returns
-    -------
-    dict
-        Diccionario con las claves
-            'apps': array_like MenuOpc de nivel 1 correspondientes
-                        a las Apps
-    """
-    user = context.get('user')
-    if user is None:
-        user = user_id if isinstance(
-            user_id, User) else User.objects.get(pk=user_id)
-    if isinstance(user, AnonymousUser):
-        return {}
-    with open('managed/apps.json', 'r') as json_file:
-        config = json.load(json_file)
-    opciones = []
-    for key, configApp in config.items():
-        if configApp['display_as_app']:
-            opc = MenuOpc.objects.filter(
-                padre=None, posicion=configApp['mnuopc_position'])
-            if opc.exists():
-                opciones.append(opc[0])
-    return {
-        'apps': [opc for opc in opciones if opc.user_has_option(user)],
-    }
+#     Returns
+#     -------
+#     dict
+#         Diccionario con las claves
+#             'apps': array_like MenuOpc de nivel 1 correspondientes
+#                         a las Apps
+#     """
+#     user = context.get('user')
+#     if user is None:
+#         user = user_id if isinstance(
+#             user_id, User) else User.objects.get(pk=user_id)
+#     if isinstance(user, AnonymousUser):
+#         return {}
+#     with open('managed/apps.json', 'r') as json_file:
+#         config = json.load(json_file)
+#     opciones = []
+#     for key, configApp in config.items():
+#         if configApp['display_as_app']:
+#             opc = MenuOpc.objects.filter(
+#                 padre=None, posicion=configApp['mnuopc_position'])
+#             if opc.exists():
+#                 opciones.append(opc[0])
+#     return {
+#         'apps': [opc for opc in opciones if opc.user_has_option(user)],
+#     }
 
 
 @register.inclusion_tag(

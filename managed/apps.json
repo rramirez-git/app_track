@@ -3,6 +3,14 @@
     "mnuopc_position": 50,
     "display_as_app": true
   },
+  "nota": {
+    "mnuopc_position": 51,
+    "display_as_app": true
+  },
+  "alerta": {
+    "mnuopc_position": 52,
+    "display_as_app": true
+  },
   "catalogo": {
     "mnuopc_position": 75,
     "display_as_app": true
@@ -20,4 +28,3 @@
     "display_as_app": false
   }
 }
-  

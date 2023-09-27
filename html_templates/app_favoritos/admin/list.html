@@ -72,7 +72,7 @@
                     <input type="checkbox" class="form-check-inline massive-operations" data-dgr-object-id="{{ reg.pk }}" />
                 </td>
                 <td data-dgr-raw-sort-value="{{ reg.usuarioe|lower }}" data-dgr-raw-filter-value="{{ reg.usuario|lower }}">
-                    {{ reg.usuario }}
+                    {{ reg.usuario.get_full_name }}
                 </td>
                 <td data-dgr-raw-sort-value="{{ reg.etiqueta|lower }}" data-dgr-raw-filter-value="{{ reg.etiqueta|lower }}">
                     {{ reg.etiqueta }}

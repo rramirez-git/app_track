@@ -3,7 +3,7 @@
 {% for app in apps %}
     <!-- Inlcuyendo {{ app }} -->
     {% if app|inicio_template_exists %}
-        {% include app|add:"/inicio.html" %}
+        {% include app|add:"/inicio.html" with context_app=context %}
     {% else %}
         <!-- No se encontro el template {{app}}/inicio.html -->
     {% endif %}

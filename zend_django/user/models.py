@@ -26,4 +26,4 @@ class UserProfile(models.Model):
         ordering = ['telefono', 'celular', 'whatsapp']
 
     def __str__(self):
-        return f"{self.user}"
+        return f"{self.user.get_full_name()} {self.apellido_materno}".strip()

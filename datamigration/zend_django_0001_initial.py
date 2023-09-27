@@ -1,9 +1,14 @@
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import Permission
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
-from zend_django.models import MenuOpc, ParametroSistema, ParametroUsuario, ParametroUsuarioValor, UserProfile
 from app_catalogo.models import TipoParametro
+from zend_django.models import MenuOpc
+from zend_django.models import ParametroSistema
+from zend_django.models import ParametroUsuario
+from zend_django.models import ParametroUsuarioValor
+from zend_django.models import UserProfile
 
 from .utils import update_permisos
 
@@ -13,6 +18,7 @@ def migration():
 
     Group.objects.get_or_create(name="Administrador")
     Group.objects.get_or_create(name="Pruebas")
+    Group.objects.get_or_create(name="Basico")
 
     if not User.objects.filter(username="admin").exists():
         admin = User.objects.create(
@@ -58,7 +64,7 @@ def migration():
     migrar = MenuOpc.objects.get_or_create(
         nombre="Aplicar Migracion de Datos", padre=conf, posicion=100,
         vista="aplicar_migraciones_vw")[0]
-    
+
     cat = MenuOpc.objects.get_or_create(
         nombre="Catalogos", posicion=75, vista='idx_app_catalogo')[0]
 
@@ -117,7 +123,7 @@ def migration():
         Permission.objects.get(codename="delete_parametrousuario"),
         Permission.objects.get(codename="view_parametrousuario"),
         ])
-    
+
     opc = MenuOpc.objects.get_or_create(
         nombre="Tipos de Paramétro",
         vista="tipoparametro_list",

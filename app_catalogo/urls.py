@@ -5,7 +5,6 @@ base_path => 'catalogo/'
 
 """
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import permission_required
 from django.urls import include
 from django.urls import path
 

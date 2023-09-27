@@ -25,7 +25,7 @@ from django.urls import path
 import app_cliente.cliente.vw as views
 
 obj = 'cliente'
-app_label = 'cliente'
+app_label = 'app_cliente'
 
 urlpatterns = [
     path('', permission_required(
@@ -40,6 +40,9 @@ urlpatterns = [
     path('eliminar/<pk>/', permission_required(
         f'{app_label}.delete_{obj}')(views.Delete.as_view()),
         name=f"{obj}_delete"),
+    path('importar/', permission_required(
+        f'{app_label}.import_{obj}')(views.Import.as_view()),
+        name=f"{obj}_import"),
     path('<pk>/', permission_required(
         f'{app_label}.view_{obj}')(views.Read.as_view()),
         name=f"{obj}_read"),

@@ -48,10 +48,12 @@ urlpatterns = [
         name=f"{obj}_delete"),
     path('get/', login_required(
         views.Get.as_view()), name=f"{obj}_get"),
-    path('set/', login_required(
-        views.Set.as_view()), name=f"{obj}_set"),
-    path('del/', login_required(
-        views.Del.as_view()), name=f"{obj}_del"),
+    path('set/', permission_required(
+        f'{app_label}.add_ad_mine_{obj}')(views.Set.as_view()),
+        name=f"{obj}_set"),
+    path('del/', permission_required(
+        f'{app_label}.delete_ad_mine_{obj}')(views.Del.as_view()),
+        name=f"{obj}_del"),
     path('<pk>/', permission_required(
         f'{app_label}.view_mine_{obj}')(views.Read.as_view()),
         name=f"{obj}_read"),

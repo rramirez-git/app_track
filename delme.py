@@ -1,4 +1,5 @@
-from app_cliente.models import Cliente, TaxonomiaExpediente
+from app_cliente.models import Cliente
+from app_catalogo.models import TaxonomiaExpediente
 from app_cliente.cliente.models import UserProfilePkCliente, UserProfilePkNoCliente, UserProfileResponsables
 from zend_django.models import UserProfile
 from django.contrib.auth.models import User
@@ -36,4 +37,11 @@ def f1():
     print(UserProfilePkNoCliente())
     print(UserProfileResponsables())
 
-f1()
+def f2():
+    up = UserProfile.objects.get(user__username='rramirez')
+    perms = ["app_nota.add_nota_cliente", "app_nota.view_nota_cliente", "app_alerta.add_alerta_cliente"]
+    for p in perms:
+        print(f"{p} => {up.user.has_perm(p)}")
+    print(f"{perms} => {up.user.has_perms(perms)}")
+
+f2()

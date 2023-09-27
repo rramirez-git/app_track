@@ -10,7 +10,9 @@ class RecursoExterno(models.Model):
         ordering = ["nombre", 'apellido_paterno', 'apellido_materno']
 
     def __str__(self):
-        return f"{self.nombre.strip()} {self.apellido_paterno.strip()} {self.apellido_materno.strip()}"
+        return f"{self.nombre.strip()} " \
+            f"{self.apellido_paterno.strip()} " \
+            f"{self.apellido_materno.strip()}"
 
     def __unicode__(self):
         return self.__str__()

@@ -1,0 +1,112 @@
+{% extends "zend_django/html/form.html" %}
+{% load crispy_forms_tags %}
+{% load op_helpers %}
+{% load util_filters %}
+
+{% block extraafter %}
+
+{% verbatim %}
+
+    <script type="text/x-handlebars-template" id="modal-content-notas-template">
+        {{#if can_add}}
+            
+            {% endverbatim %}
+
+            <form method="post" autocomplete="off" enctype="multipart/form-data" id="nota-form" action="">
+                {% csrf_token %}
+                {% crispy form_nota %}
+                <input type="hidden" name="action" id="action" value="add-nota" />
+                <p>Notificando también a:</p>
+                <div class="row" style="padding-left: 10px;">
+                    {% for resp in responsables %}
+                    <div class="col-sm-3 form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" value="{{ resp.0 }}" id="usrs" name="usrs" />
+                            {{ resp.1 }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <button type="submit" class="btn btn-outline-secondary" id="btn-save" title="{% action_label 'save' %}">
+                            {% action_icon 'save' %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            {% verbatim %}
+
+        {{/if}}
+        {{#if can_read }}
+
+            {% endverbatim %}
+
+            {% for nota in object.userprofile.user.notas.all %}
+
+            <hr />
+            <div class="row">
+                <div class="col">
+                    <span class="badge badge-pill badge-secondary">{{ nota.fecha_creacion }}: </span>
+                    {{ nota|as_paragraph }}
+                    <p class="blockquote-footer">
+                        {{ nota.creado_por }}
+                    </p>
+                </div>
+            </div>
+
+            {% endfor %}
+
+            {% verbatim %}
+            
+        {{/if}}
+    </script>
+
+    <script type="text/x-handlebars-template" id="modal-content-alertas-template">
+        {{#if can_add}}
+            
+            {% endverbatim %}
+
+            <form method="post" autocomplete="off" enctype="multipart/form-data" id="alerta-form" action="">
+                {% csrf_token %}
+                {% crispy form_alerta %}
+                <input type="hidden" name="action" id="action" value="add-alerta" />
+                <div class="row">
+                    <div class="col-sm-9 offset-sm-3 form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" value="yes" id="confirm_cte" name="confirm_cte" />
+                            Confirmar al cliente
+                        </label>
+                    </div>
+                </div>
+                <p>Notificando también a:</p>
+                <div class="row" style="padding-left: 10px;">
+                    {% for resp in responsables %}
+                    <div class="col-sm-3 form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" value="{{ resp.0 }}" id="usrs" name="usrs" />
+                            {{ resp.1 }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <button type="submit" class="btn btn-outline-secondary" id="btn-save" title="{% action_label 'save' %}">
+                            {% action_icon 'save' %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            {% verbatim %}
+
+        {{/if}}
+    </script>
+
+{% endverbatim %}
+
+
+
+{% endblock %}

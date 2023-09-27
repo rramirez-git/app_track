@@ -9,8 +9,8 @@ Constantes
 ----------
 - parametro_upload_to
 """
-from django.db import models
 from app_catalogo.models import TipoParametro
+from django.db import models
 
 testing = True
 

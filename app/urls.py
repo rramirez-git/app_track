@@ -26,6 +26,8 @@ urlpatterns = [
     path('', include('app_favoritos.urls')),
     path('', include('app_cliente.urls')),
     path('catalogo/', include('app_catalogo.urls')),
+    path('', include('app_nota.urls')),
+    path('', include('app_alerta.urls')),
 ]
 
 urlpatterns += static(

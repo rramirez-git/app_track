@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'app_favoritos',
     "app_cliente",
     "app_catalogo",
+    "app_nota",
+    "app_alerta",
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,59 @@
+{% extends "zend_django/html/form.html" %}
+
+{% block extraafter %}
+
+<div class="row">
+
+    <div class="col-sm-8">
+
+        <div class="row">
+
+            <div class="col-sm-5 offset-md-3 text-left">
+                Creado por: <strong>{{ object.creado_por }}</strong> en <strong>{{ object.fecha_creacion }}</strong>.
+            </div>
+            
+            <div class="col-sm-4 text-right">
+                Actualizado por: <strong>{{ object.actualizado_por }}</strong> en <strong>{{ object.fecha_actualizacion }}</strong>.
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-sm-5 offset-md-3 text-left">
+                {% if object.alertado %}
+                    <input type="checkbox" class="form-check-inline" disabled="disabled" checked="checked" />
+                {% else %}
+                    <input type="checkbox" class="form-check-inline" disabled="disabled" />
+                {% endif %}
+                Alertado
+            </div>
+            
+            <div class="col-sm-4 text-right">
+                {% if object.mostrar_alerta %}
+                    <input type="checkbox" class="form-check-inline" disabled="disabled" checked="checked" />
+                {% else %}
+                    <input type="checkbox" class="form-check-inline" disabled="disabled" />
+                {% endif %}
+                Mostrar alerta
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-sm-5 offset-md-3 text-left">
+                Fecha alertado: <strong>{% if object.fecha_alertado %}{{ object.fecha_alertado }}{% endif %}</strong>.
+            </div>
+            
+            <div class="col-sm-4 text-right">
+                Fecha no mostrar Alerta: <strong>{% if object.fecha_no_mostrar %}{{ object.fecha_no_mostrar }}{% endif %}</strong>.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

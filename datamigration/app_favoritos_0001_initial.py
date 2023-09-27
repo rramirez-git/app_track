@@ -1,4 +1,5 @@
-from django.contrib.auth.models import Permission, Group
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission
 
 from .utils import update_permisos
 from zend_django.models import MenuOpc
@@ -31,10 +32,10 @@ def migration():
         Permission.objects.get(codename='view_mine_fav'),
     ])
 
-    gpoFavoritos = Group.objects.get_or_create(name="Admin Mis Favoritos")[0]
-    gpoFavoritos.permissions.set([
-        Permission.objects.get(codename='add_mine_fav'),
-        Permission.objects.get(codename='change_mine_fav'),
-        Permission.objects.get(codename='delete_mine_fav'),
-        Permission.objects.get(codename='view_mine_fav'),
-    ])
+    gpo = Group.objects.get_or_create(name="Basico")[0]
+    gpo.permissions.add(Permission.objects.get(codename='view_mine_fav'))
+    gpo.permissions.add(Permission.objects.get(codename='add_mine_fav'))
+    gpo.permissions.add(Permission.objects.get(codename='change_mine_fav'))
+    gpo.permissions.add(Permission.objects.get(codename='delete_mine_fav'))
+    gpo.permissions.add(Permission.objects.get(codename='add_ad_mine_fav'))
+    gpo.permissions.add(Permission.objects.get(codename='delete_ad_mine_fav'))

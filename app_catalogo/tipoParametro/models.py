@@ -7,6 +7,7 @@ Modelos
 """
 from django.db import models
 
+
 class TipoParametro(models.Model):
     """
     Modelo de Tipos de paramétro
@@ -22,7 +23,6 @@ class TipoParametro(models.Model):
 
     def __str__(self) -> str:
         return self.nombre.strip()
-    
+
     def __unicode__(self) -> str:
         return self.__str__()
-    

@@ -20,16 +20,18 @@ Funciones de Utileria:
 - BootstrapColors
 """
 
-from django.conf import settings
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
+from django.conf import settings
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.utils.safestring import mark_safe
 from email.mime.image import MIMEImage
+from json import JSONDecodeError
 from os import mkdir
 from os import path
+from requests import post as PostRequest
 from unicodedata import normalize
 
 import pandas as pd
@@ -228,7 +230,7 @@ def as_paragraph_fn(text):
     res = "<p>{}</p>".format(res)
     res = res.replace("<br /><br />", '</p><p>')
     res = res.replace("<br /></p>", '</p>')
-    return res
+    return mark_safe(res)
 
 
 def hipernormalize(text=None):
@@ -344,3 +346,20 @@ def create_date_range(inicio, fin):
     for x in pd.date_range(inicio, fin):
         result.append(date(x.year, x.month, x.day))
     return result
+
+
+def JsonRequest(url, params=dict()):
+    res = PostRequest(url, params)
+    if res.status_code != 200:
+        print(params)
+        print(res.text)
+        print(res.status_code)
+        return None
+    try:
+        return res.json()
+    except JSONDecodeError as ex:
+        print(params)
+        print(res.text)
+        print(res.status_code)
+        print(ex)
+        raise ex

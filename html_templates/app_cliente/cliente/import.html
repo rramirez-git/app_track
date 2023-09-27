@@ -1,0 +1,44 @@
+{% extends "zend_django/html/form.html" %}
+{% load crispy_forms_tags %}
+
+{% block extraafter %}
+
+{% if resultados %}
+
+    <h1>Resultados de la operación</h1>
+
+    <div class="row">
+        <div class="col-sm-8">
+    
+            <div class="row">
+                <div class="col-sm-3 h4 text-right">Cliente Inicial:</div>
+                <div class="col-sm-9 h4">{{ resultados.inicio }}</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 h4 text-right">Cliente Final:</div>
+                <div class="col-sm-9 h4">{{ resultados.fin }}</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 h4 text-right">Sitio de Descarga:</div>
+                <div class="col-sm-9 h4"><a href="{{ resultados.url }}" target="_blank">{{ resultados.url }}</a></div>
+            </div>
+
+            {% for res in resultados.ctes %}
+
+            <div class="row">
+                <div class="col-sm-3 text-right h4">Cliente {{ res.id }}:</div>
+                <div class="col-sm-9">
+                    <div class="alert alert-{{ res.type }}" role="alert">
+                        {{ res.res }}
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        
+        </div>
+    </div>
+
+{% endif %}
+
+{% endblock %}

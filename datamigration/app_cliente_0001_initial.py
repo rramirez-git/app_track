@@ -1,4 +1,6 @@
-from django.contrib.auth.models import Permission, Group
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 
 from app_catalogo.models import BootstrapColor
 from app_catalogo.models import BootstrapColor
@@ -13,9 +15,10 @@ from app_catalogo.models import RecursoExterno
 from app_catalogo.models import TaxonomiaExpediente
 from app_catalogo.models import TipoActividad
 from app_catalogo.models import TipoDocumento
-from app_catalogo.models import UMA
-from zend_django.models import MenuOpc, ParametroUsuario
 from app_catalogo.models import TipoParametro
+from app_catalogo.models import UMA
+from zend_django.models import MenuOpc
+from zend_django.models import ParametroUsuario
 
 from .utils import update_permisos
 
@@ -40,6 +43,30 @@ def migration():
         Permission.objects.get(codename='delete_cliente'),
         Permission.objects.get(codename='view_cliente'),
     ])
+
+    opc = MenuOpc.objects.get_or_create(
+        nombre="Importar Clientes",
+        posicion=1000,
+        vista='cliente_import',
+        padre=app)[0]
+    opc.permisos_requeridos.add(
+        Permission.objects.get(codename="import_cliente"))
+
+    Permission.objects.get_or_create(
+        name="Ver notas de clientes",
+        content_type=ContentType.objects.get(
+            app_label="app_nota", model="nota"),
+        codename="view_nota_cliente")
+    Permission.objects.get_or_create(
+        name="Agregar notas a clientes",
+        content_type=ContentType.objects.get(
+            app_label="app_nota", model="nota"),
+        codename="add_nota_cliente")
+    Permission.objects.get_or_create(
+        name="Agregar alertas a clientes",
+        content_type=ContentType.objects.get(
+            app_label="app_alerta", model="alerta"),
+        codename="add_alerta_cliente")
 
     cat = MenuOpc.objects.get_or_create(
         nombre="Catalogos", posicion=75, vista='idx_app_catalogo')[0]

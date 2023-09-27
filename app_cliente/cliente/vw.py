@@ -10,29 +10,38 @@ Vistas
 - Delete
 - ResetPassword
 """
+from django.contrib.auth.models import Group
 from django.db import IntegrityError
 from django.db.models import ProtectedError
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.contrib.auth.models import Group
+from django.views.generic import View
+from urllib.parse import urlparse
 
-from zend_django.user.forms import frmUser
+from app_alerta.models import Alerta
+from app_cliente.direccion.forms import frmDireccion
+from app_nota.models import Nota
+from zend_django.models import UserProfile
+from zend_django.templatetags.op_helpers import crud_label
+from zend_django.templatetags.utils import GenerateReadCRUDToolbar
 from zend_django.views import GenericCreate
 from zend_django.views import GenericDelete
 from zend_django.views import GenericList
 from zend_django.views import GenericRead
 from zend_django.views import GenericUpdate
-from zend_django.templatetags.utils import GenerateReadCRUDToolbar
-from zend_django.templatetags.op_helpers import crud_label
-from app_cliente.direccion.forms import frmDireccion
 
-from .forms import frmCteGenerales as base_form
-from .forms import frmCteUser
-from .forms import frmCteOtros
+from .forms import frmAlerta
 from .forms import frmCteContacto
+from .forms import frmCteGenerales as base_form
+from .forms import frmCteOtros
+from .forms import frmCteUser
+from .forms import frmImportar
+from .forms import frmNota
+from .importar import ImportCte
 from .models import Cliente as main_model
+from .models import UserProfileResponsables
 
 
 def template_base_path(file):
@@ -71,6 +80,7 @@ class Read(GenericRead):
     base_data_form = base_form
     main_data_model = main_model
     app = 'cliente'
+    html_template = template_base_path("read")
 
     def get(self, request, pk):
         if not self.main_data_model.objects.filter(pk=pk).exists():
@@ -117,6 +127,30 @@ class Read(GenericRead):
         }
         toolbar = GenerateReadCRUDToolbar(
             request, self.model_name, obj, self.main_data_model)
+        if request.user.has_perm("app_nota.add_nota_cliente") or \
+                request.user.has_perm("app_nota.view_nota_cliente"):
+            if request.user.has_perm('app_nota.add_nota_cliente'):
+                can_add = 'true'
+            else:
+                can_add = 'false'
+            if request.user.has_perm('app_nota.view_nota_cliente'):
+                can_read = 'true'
+            else:
+                can_read = 'false'
+            toolbar.append({
+                "type": "button",
+                "label":
+                    '<span title="Nota">'
+                    '<i class="far fa-sticky-note"></i></span>',
+                "onclick": f"open_nota_panel({can_read}, {can_add})"})
+        if request.user.has_perms(
+                ["app_alerta.add_alerta_cliente"]):
+            toolbar.append({
+                "type": "button",
+                "label":
+                    '<span title="Alerta">'
+                    '<i class="far fa-bell"></i></span>',
+                "onclick": f"open_alerta_panel(true)"})
         return render(request, self.html_template, {
             'titulo': obj,
             'titulo_descripcion': self.titulo_descripcion,
@@ -128,7 +162,58 @@ class Read(GenericRead):
             'search_value': '',
             'forms': forms,
             'app': self.app,
+            'form_nota': frmNota(),
+            'form_alerta': frmAlerta(),
+            'responsables': UserProfileResponsables(),
+            'object': obj,
         })
+
+    def post(self, request, pk):
+        if "add-nota" == request.POST.get('action', ''):
+            nota = request.POST.get('nota', '')
+            fecha_alerta = request.POST.get('fecha_notificacion', '')
+            cte = self.main_data_model.objects.get(pk=pk)
+            Nota.objects.create(
+                user=cte.userprofile.user,
+                nota=nota,
+                creado_por=str(request.user.profile),
+                actualizado_por=str(request.user.profile))
+            if "" != fecha_alerta:
+                url = reverse('cliente_read', kwargs={'pk': pk})
+                link = f'<a href="{url}" target="_blank">{cte}</a>'
+                nota = f"En referencia al cliente {link}:\n\n{nota}"
+                Alerta.objects.create(
+                    user=request.user,
+                    nota=nota,
+                    fecha_alerta=fecha_alerta)
+                for usrpk in request.POST.getlist('usrs', ''):
+                    Alerta.objects.create(
+                        user=UserProfile.objects.get(
+                            pk=usrpk).user,
+                        nota=nota,
+                        fecha_alerta=fecha_alerta)
+        if "add-alerta" == request.POST.get('action', ''):
+            nota = request.POST.get('nota', '')
+            fecha_alerta = request.POST.get('fecha_alerta', '')
+            Alerta.objects.create(
+                user=request.user,
+                nota=nota,
+                fecha_alerta=fecha_alerta)
+            if "yes" == request.POST.get('confirm_cte', ''):
+                Alerta.objects.create(
+                    user=self.main_data_model.objects.get(
+                        pk=pk).userprofile.user,
+                    nota=nota,
+                    fecha_alerta=fecha_alerta)
+            for usrpk in request.POST.getlist('usrs', ''):
+                Alerta.objects.create(
+                    user=UserProfile.objects.get(
+                        pk=usrpk).user,
+                    nota=nota,
+                    fecha_alerta=fecha_alerta)
+        return HttpResponseRedirect(reverse(
+                f'{self.model_name}_read',
+                kwargs={'pk': pk}))
 
 
 class Create(GenericCreate):
@@ -198,6 +283,7 @@ class Create(GenericCreate):
             user.email = request.POST.get('email', '')
             user.set_password(request.POST.get('password', ''))
             user.groups.set((Group.objects.get(name="Cliente"), ))
+            user.groups.add(Group.objects.get(name="Basico"))
             user.save()
             userprofile = fCContacto.save(commit=False)
             userprofile.user = user
@@ -296,15 +382,14 @@ class Update(GenericUpdate):
         if not self.main_data_model.objects.filter(pk=pk).exists():
             return HttpResponseRedirect(reverse('item_no_encontrado'))
         obj = self.main_data_model.objects.get(pk=pk)
-        form = self.base_data_form(instance=obj, data=request.POST)
         fCUser = frmCteUser(
             instance=obj.userprofile.user,
             initial={
                 'apellido_materno': obj.userprofile.apellido_materno,
                 'password': obj.contraseña},
             data=request.POST)
-        fCGenerales = self.base_data_form(instance=obj,
-        data=request.POST)
+        fCGenerales = self.base_data_form(
+            instance=obj, data=request.POST)
         fCOtros = frmCteOtros(initial={
             'obs_semanas_cotizadas': obj.obs_semanas_cotizadas,
             'obs_homonimia': obj.obs_homonimia,
@@ -349,6 +434,7 @@ class Update(GenericUpdate):
             user.email = request.POST.get('email', '')
             user.set_password(request.POST.get('password', ''))
             user.groups.set((Group.objects.get(name="Cliente"), ))
+            user.groups.add(Group.objects.get(name="Basico"))
             user.save()
             userprofile = fCContacto.save()
             userprofile.apellido_materno = request.POST.get(
@@ -395,3 +481,51 @@ class Delete(GenericDelete):
             return HttpResponseRedirect(reverse('item_con_relaciones'))
         except IntegrityError:
             return HttpResponseRedirect(reverse('item_con_relaciones'))
+
+
+class Import(View):
+    html_template = template_base_path('import')
+    app = 'cliente'
+
+    def get(self, request):
+        frmImp = frmImportar()
+        return render(request, self.html_template, {
+            'titulo': "Importar",
+            'titulo_descripcion': "Clientes",
+            'toolbar': None,
+            'footer': False,
+            'read_only': False,
+            'alertas': [],
+            'req_chart': False,
+            'search_value': '',
+            'forms': {'top': [{'form': frmImp}]},
+            'app': self.app
+        })
+
+    def post(self, request):
+        resultados = None
+        frmImp = frmImportar(request.POST)
+        if frmImp.is_valid():
+            resultados = self.importar(
+                int(request.POST.get('cliente_inicial', 0)),
+                int(request.POST.get('cliente_final', 0)),
+                request.POST.get('sitio_de_descarga', ''))
+        return render(request, self.html_template, {
+            'titulo': "Importar",
+            'titulo_descripcion': "Clientes",
+            'toolbar': None,
+            'footer': False,
+            'read_only': False,
+            'alertas': [],
+            'req_chart': False,
+            'search_value': '',
+            'forms': {'top': [{'form': frmImp}]},
+            'app': self.app,
+            'resultados': resultados,
+        })
+
+    def importar(self, inicio, fin, url):
+        uri = urlparse(url)
+        url = f'{uri.scheme}://{uri.netloc}/'
+        resultados = ImportCte(inicio, fin, url).run()
+        return resultados

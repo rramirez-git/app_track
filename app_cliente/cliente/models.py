@@ -102,6 +102,9 @@ class Cliente(models.Model):
             "userprofile__user__last_name",
             "userprofile__apellido_materno",
             "userprofile__user__first_name"]
+        permissions = [
+            ('import_cliente', 'Importar clientes'),
+        ]
 
     def __str__(self):
         return "{} {} {} - {}".format(
